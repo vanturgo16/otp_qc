@@ -1,0 +1,180 @@
+.dt-button.buttons-columnVisibility {
+    background-color: rgb(52, 35, 114);
+    color: white;
+}
+
+.dt-button.buttons-columnVisibility.active {
+    background-color: rgb(75, 47, 177);
+}
+
+.dt-button-collection {
+    display: block;
+    height: 100% !important;
+    overflow-x: scroll !important;
+}
+
+div.field-wrapper label {
+    text-align: right;
+    padding-right: 50px;
+}
+
+div.required-field label::after {
+    content: " *";
+    color: red;
+}
+
+.select2-selection__rendered {
+    line-height: 35px !important;
+}
+
+.select2-container .select2-selection--single {
+    height: 35px !important;
+}
+
+.select2-selection__arrow {
+    height: 35px !important;
+}
+
+textarea {
+    resize: none;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+    /* background: transparent; */
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: 0;
+    color: transparent;
+    cursor: pointer;
+    position: absolute;
+    height: 20px;
+    width: auto;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+    position: absolute;
+    left: 20px;
+    top: 7px;
+}
+
+input::-webkit-datetime-edit {
+    position: relative;
+    left: 15px;
+}
+
+input::-webkit-datetime-edit-fields-wrapper {
+    position: relative;
+    left: 15px;
+}
+
+/* Tambahkan gaya untuk class 'remove-transition' yang mengatur opacity untuk transisi saat menghapus baris */
+.remove-transition {
+    opacity: 1;
+    transition: opacity 0.3s ease-out;
+}
+
+/* Tambahkan gaya untuk class 'remove-transition' yang mengatur opacity ke 0 saat menghapus baris */
+.remove-transition.remove {
+    opacity: 0;
+}
+
+div dl dt {
+    text-align: right;
+}
+
+div dl dt label {
+    padding-right: 50px;
+}
+
+.drpdwn-wrn:hover {
+    background-color: rgb(230, 166, 27);
+    color: #ffff;
+}
+.drpdwn-scn:hover {
+    background-color: rgb(110, 109, 110);
+    color: #ffff;
+}
+.drpdwn-pri:hover {
+    background-color: rgb(126, 67, 194);
+    color: #ffff;
+}
+
+/* BULK ACTION */
+:root {
+    --form-control-color: rebeccapurple;
+    --form-control-disabled: #959495;
+}
+
+input[type="checkbox"] {
+    /* Add if not using autoprefixer */
+    -webkit-appearance: none;
+    /* Remove most all native input styles */
+    appearance: none;
+    /* For iOS < 15 */
+    background-color: var(--form-background);
+    /* Not removed via appearance */
+    margin: 0;
+
+    font: inherit;
+    color: currentColor;
+    width: 1.15em;
+    height: 1.15em;
+    border: 0.15em solid currentColor;
+    border-radius: 0.15em;
+    transform: translateY(-0.075em);
+
+    display: grid;
+    place-content: center;
+}
+
+input[type="checkbox"]::before {
+    content: "";
+    width: 0.65em;
+    height: 0.65em;
+    clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+    transform: scale(0);
+    transform-origin: bottom left;
+    transition: 120ms transform ease-in-out;
+    box-shadow: inset 1em 1em var(--form-control-color);
+    /* Windows High Contrast Mode */
+    background-color: CanvasText;
+}
+
+input[type="checkbox"]:checked::before {
+    transform: scale(1);
+}
+
+input[type="checkbox"]:focus {
+    outline: max(2px, 0.15em) solid currentColor;
+    outline-offset: max(2px, 0.15em);
+}
+
+input[type="checkbox"]:disabled {
+    --form-control-color: var(--form-control-disabled);
+
+    color: var(--form-control-disabled);
+    cursor: not-allowed;
+}
+
+input[type="checkbox"]:hover {
+    cursor: pointer;
+}
+
+.row-check {
+    cursor: pointer;
+}
+
+.row-check.table-danger {
+    cursor: default;
+}
+
+input[type="text"]:read-only,
+input[type="number"]:read-only {
+    background-color: rgb(225, 222, 222);
+}
+
+/* Disabled state */
+input:read-only {
+    cursor: not-allowed;
+}
