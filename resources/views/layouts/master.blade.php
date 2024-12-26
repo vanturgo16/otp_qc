@@ -175,15 +175,11 @@
                             </a>
                             <ul class="sub-menu" aria-expanded="false">
                                 @can('PPIC_good-receipt-note')
-                                <li><a href="/good-receipt-note" data-key="t-blog-grid">Hold</a></li>
-                                @endcan
-
-                                @can('PPIC_good-lote-number')
-                                <li><a href="/good-lote-number" data-key="t-blog-grid">Reject</a></li>
+                                <li><a href="/history-stok" data-key="t-blog-grid">History Stock</a></li>
                                 @endcan
 
                                 @can('PPIC_grn-qc')
-                                <li><a href="/grn-qc" data-key="t-blog-grid">COA</a></li>
+                                <li><a href="/coa" data-key="t-blog-grid">COA</a></li>
                                 @endcan
 
                                 @can('PPIC_external-no-lot')
@@ -191,7 +187,7 @@
                                 @endcan
 
                                 @can('PPIC_workOrder')
-                                <li><a href="{{ route('ppic.workOrder.index') }}" data-key="t-blog-grid">Sample</a></li>
+                                <li><a href="{{ url('') }}" data-key="t-blog-grid">Sample</a></li>
                                 @endcan
 
                                 {{-- <li><a href="{{ route('ppic.workOrder.index') }}"

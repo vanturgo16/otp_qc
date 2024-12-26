@@ -14,11 +14,11 @@
         <div class="row">
             <div class="col-12">
                 <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                    <h4 class="mb-sm-0 font-size-18"> Barcode</h4>
+                    <h4 class="mb-sm-0 font-size-18"> Certificate of Analysis</h4>
                     <div class="page-title-right">
                         <ol class="breadcrumb m-0">
-                            <li class="breadcrumb-item"><a href="javascript: void(0);">PPIC</a></li>
-                            <li class="breadcrumb-item active"> Barcode</li>
+                            <li class="breadcrumb-item"><a href="javascript: void(0);">QC</a></li>
+                            <li class="breadcrumb-item active"> Certificate of Analysis</li>
                         </ol>
                     </div>
                 </div>
@@ -29,7 +29,7 @@
                 <div class="card">
                     <div class="card-header">
                         <div class="d-flex justify-content-between align-items-center">
-                            <form action="{{ route('barcode') }}" method="GET" class="d-flex">
+                            <form action="{{ route('coa') }}" method="GET" class="d-flex">
                                 <div class="form-group me-2">
                                     <label for="start_date">Start Date</label>
                                     <input type="date" name="start_date" id="start_date" class="form-control" value="{{ request('start_date') }}">
@@ -68,52 +68,36 @@
                     <thead>
                     <tr>
                         <th>No</th>
-                        <th>Sales Orders</th>
+                        <th>No COA</th>
                         <th>Customers </th>
-
-                        <th>Work Orders</th>
-                        <th>Work Centers</th>
-                        <th>Group</th>
-                        <th>staff</th>
-                        <th>Creted_at</th>
-                        <th>jml</th>
+                        <th>No KO</th>
+                        <th>Brand Name</th>
+                       
                         <th>Action</th>
                     </tr>
                     </thead>
 
 
                     <tbody>
-                        @foreach ($results as $data)
+                        @foreach ($query as $data)
                             
                         
                     <tr>
                         <td>{{ $loop->iteration }}</td>
-                        <td>{{ $data->so_number }}</td>
-                        <td>{{ $data->name_cust ?? 'N/A'}}</td>
+                        <td></td>
+                        <td>{{ $data->customer }}</td>
+                        <td>{{ $data->id_order_confirmations ?? 'N/A'}}</td>
 
-                        <td>{{ $data->wo_number }}</td>
-                        <td>{{ $data->work_center }}</td>
-                        <td>{{ $data->shift }}</td>
-                        <td>{{ $data->staff }}</td>
-                        <td>{{ $data->created_at }}</td>
-                        <td><b>{{ $data->barcode_count }}</b></td>
+                        <td>{{ $data->description }}</td>
+
                         <td>
+                            @php
+                             $id = Crypt::encryptString($data->id_order_confirmations);
+                             @endphp
                             <div class="btn-group">
-                                <button type="button" class="btn btn-success">Print</button>
-                                <button type="button" class="btn btn-success dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="mdi mdi-chevron-down"></i>
-                                </button>
-                                <div class="dropdown-menu">
-                                    <a class="dropdown-item" href="{{ route('print_standar', $data->id) }}">Print Standar</a>
-                                    <a class="dropdown-item" href="{{ route('print_broker', $data->id) }}">Print Broker</a>
-                                    <a class="dropdown-item" href="{{ route('print_cbc', $data->id) }}">Print CBC</a>
-                                    <hr>
-                                    <a class="dropdown-item" href="{{ route('barcode.cange', $data->id) }}">Change SO</a>
-                                    <a class="dropdown-item" href="{{ route('table_print') }}">Traceability</a>
+                                {{-- <button type="button" class="btn btn-success">Print</button> --}}
 
-                                </div>
-                            </div>
-                            <a href="{{ route('show_barcode', $data->id) }}" class="btn btn-primary waves-effect waves-light">Detail Barcode</a>
+                            <a href="{{ url('show-coa', $id) }}" class="btn btn-success">show</a>
                         </td>
                     </tr>
                     @endforeach
