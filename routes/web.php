@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DataSampleController;
 use App\Http\Controllers\GrnController;
 use App\Http\Controllers\qc\CoaController;
 use App\Http\Controllers\qc\HistorystokController;
@@ -30,18 +31,7 @@ Route::middleware(['auth', 'clear.permission.cache', 'permission:PPIC'])->group(
         Route::post('/store-coa', 'store')->name('coa.store');
         Route::get('/show-coa/{id}', 'show')->name('show_coa');
         
-
         Route::get('/print-coa', 'print_coa')->name('print_coa');
-
-        // Route::get('/create-barcode', 'create')->name('barcode.create');
-        // Route::post('/store-barcode', 'store')->name('post.create');
-        // Route::get('/cange-barcode-so/{id}', 'cange')->name('barcode.cange');
-        
-        // 
-        // Route::get('/print-standar-barcode/{id}', 'print_standar')->name('print_standar');
-        // Route::get('/print-broker-barcode/{id}', 'print_broker')->name('print_broker');
-        // Route::get('/print-cbc-barcode/{id}', 'print_cbc')->name('print_cbc');
-        // Route::get('/table', 'table_print')->name('table_print');
     });
 
     Route::controller(HistorystokController::class)->middleware('permission:PPIC_Barcode')->group(function () {
@@ -49,6 +39,12 @@ Route::middleware(['auth', 'clear.permission.cache', 'permission:PPIC'])->group(
       
     });
 
-   
+    Route::controller(DataSampleController::class)->group(function () {
+        Route::prefix('data-sample')->group(function () {
+            Route::get('/', 'index')->name('sample.index');
+            Route::post('/update/{id_so}', 'update')->name('sample.update');
+            Route::get('/print-pdf/{id_so}', 'printPdf')->name('sample.printPdf');
+        });
+    });
 
 }); 
