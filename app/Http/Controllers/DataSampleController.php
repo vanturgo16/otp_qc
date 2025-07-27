@@ -8,10 +8,11 @@ use App\Models\Marketing\salesOrder;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Exports\SampleDataExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class DataSampleController extends Controller
 {
-    // ...existing methods...
 
     public function printPdf($id_so)
     {
@@ -52,6 +53,7 @@ class DataSampleController extends Controller
         $pdf = Pdf::loadView('sample.print_pdf', compact('data'));
         return $pdf->stream('surat_permintaan_sample.pdf');
     }
+
     public function index(Request $request)
     {
         $subqueryBarcodes = DB::table('barcode_detail')
@@ -104,6 +106,7 @@ class DataSampleController extends Controller
             ])
             ->where('sales_orders.so_type', 'Sample');
 
+
         // Filter by no_sample
         if ($request->filled('no_sample')) {
             $dataSoSamplesQuery->where('data_samples.no_sample', 'like', '%' . $request->no_sample . '%');
@@ -111,6 +114,22 @@ class DataSampleController extends Controller
         // Filter by sample_type (so_category)
         if ($request->filled('sample_type')) {
             $dataSoSamplesQuery->where('sales_orders.so_category', 'like', '%' . $request->sample_type . '%');
+        }
+        // Filter by SO Number
+        if ($request->filled('so_number')) {
+            $dataSoSamplesQuery->where('sales_orders.so_number', 'like', '%' . $request->so_number . '%');
+        }
+        // Filter by Customer
+        if ($request->filled('customer')) {
+            $dataSoSamplesQuery->where('master_customers.name', 'like', '%' . $request->customer . '%');
+        }
+        // Filter by Barcode
+        if ($request->filled('barcode')) {
+            $dataSoSamplesQuery->where('barcode_data.all_barcodes', 'like', '%' . $request->barcode . '%');
+        }
+        // Filter by Marketing
+        if ($request->filled('marketing')) {
+            $dataSoSamplesQuery->where('master_salesmen.name', 'like', '%' . $request->marketing . '%');
         }
 
         $dataSoSamples = $dataSoSamplesQuery->orderBy('data_samples.no_sample', 'asc')->get();
@@ -182,5 +201,82 @@ class DataSampleController extends Controller
             DB::rollBack();
             return redirect()->route('sample.index')->with('error', 'Failed to Create Data Sample');
         }
+    }
+
+    public function exportExcel(Request $request)
+    {
+        // Query sama seperti index, tapi ambil semua hasil filter
+        $subqueryBarcodes = DB::table('barcode_detail')
+            ->leftJoin('barcodes', 'barcode_detail.id_barcode', '=', 'barcodes.id')
+            ->select(
+                'barcodes.id_sales_orders',
+                DB::raw('GROUP_CONCAT(barcode_number SEPARATOR ", ") as all_barcodes')
+            )
+            ->whereIn('barcode_detail.id_barcode', function ($query) {
+                $query->select('id')
+                    ->from('barcodes')
+                    ->whereIn('id_sales_orders', function ($subquery) {
+                        $subquery->select('id')
+                            ->from('sales_orders')
+                            ->where('so_type', 'Sample');
+                    });
+            })
+            ->groupBy('barcodes.id_sales_orders');
+
+        $dataSoSamplesQuery = DB::table('sales_orders')
+            ->leftJoin('data_samples', 'sales_orders.id', '=', 'data_samples.id_so')
+            ->leftJoin('master_customers', 'sales_orders.id_master_customers', '=', 'master_customers.id')
+            ->leftJoin('master_salesmen', 'sales_orders.id_master_salesmen', '=', 'master_salesmen.id')
+            ->leftJoin('master_product_fgs', 'sales_orders.id_master_products', '=', 'master_product_fgs.id')
+            ->leftJoin('master_units', 'sales_orders.id_master_units', '=', 'master_units.id')
+            ->leftJoinSub($subqueryBarcodes, 'barcode_data', function ($join) {
+                $join->on('sales_orders.id', '=', 'barcode_data.id_sales_orders');
+            })
+            ->select([
+                'sales_orders.id as id_so',
+                'data_samples.id as id_sample',
+                'sales_orders.so_number',
+                'data_samples.no_sample',
+                'sales_orders.date as request_date',
+                'master_customers.name as customer_name',
+                'master_salesmen.name as sales_name',
+                DB::raw('concat(master_product_fgs.product_code, " - ", master_product_fgs.description) as product_item'),
+                'sales_orders.so_category as type',
+                'master_product_fgs.perforasi',
+                'sales_orders.qty',
+                'master_units.unit',
+                'barcode_data.all_barcodes',
+                'master_product_fgs.weight',
+                'master_product_fgs.type_product',
+                'data_samples.sample_submission_date',
+                'data_samples.done_duration',
+                'data_samples.sample_done_date',
+                'data_samples.remarks',
+                'data_samples.created_at',
+            ])
+            ->where('sales_orders.so_type', 'Sample');
+
+        if ($request->filled('no_sample')) {
+            $dataSoSamplesQuery->where('data_samples.no_sample', 'like', '%' . $request->no_sample . '%');
+        }
+        if ($request->filled('sample_type')) {
+            $dataSoSamplesQuery->where('sales_orders.so_category', 'like', '%' . $request->sample_type . '%');
+        }
+        if ($request->filled('so_number')) {
+            $dataSoSamplesQuery->where('sales_orders.so_number', 'like', '%' . $request->so_number . '%');
+        }
+        if ($request->filled('customer')) {
+            $dataSoSamplesQuery->where('master_customers.name', 'like', '%' . $request->customer . '%');
+        }
+        if ($request->filled('barcode')) {
+            $dataSoSamplesQuery->where('barcode_data.all_barcodes', 'like', '%' . $request->barcode . '%');
+        }
+        if ($request->filled('marketing')) {
+            $dataSoSamplesQuery->where('master_salesmen.name', 'like', '%' . $request->marketing . '%');
+        }
+
+        $dataSoSamples = $dataSoSamplesQuery->orderBy('data_samples.no_sample', 'asc')->get();
+
+        return Excel::download(new SampleDataExport($dataSoSamples), 'sample_data.xlsx');
     }
 }

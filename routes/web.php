@@ -1,3 +1,4 @@
+// ...existing use statements...
 <?php
 
 use Illuminate\Support\Facades\Route;
@@ -22,10 +23,10 @@ Route::post('auth/login', [AuthController::class, 'postlogin'])->name('postlogin
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::middleware(['auth', 'clear.permission.cache', 'permission:PPIC'])->group(function () {
-
+    
     //Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-
+    
     Route::controller(CoaController::class)->middleware('permission:PPIC_Barcode')->group(function () {
         Route::get('/coa', 'index')->name('coa');
         Route::post('/store-coa', 'store')->name('coa.store');
@@ -33,17 +34,18 @@ Route::middleware(['auth', 'clear.permission.cache', 'permission:PPIC'])->group(
         
         Route::get('/print-coa', 'print_coa')->name('print_coa');
     });
-
+    
     Route::controller(HistorystokController::class)->middleware('permission:PPIC_Barcode')->group(function () {
         Route::get('/history-stok', 'index')->name('history-stok');
-      
+        
     });
-
+    
     Route::controller(DataSampleController::class)->group(function () {
         Route::prefix('data-sample')->group(function () {
             Route::get('/', 'index')->name('sample.index');
             Route::post('/update/{id_so}', 'update')->name('sample.update');
             Route::get('/print-pdf/{id_so}', 'printPdf')->name('sample.printPdf');
+            Route::get('/export-excel', [App\Http\Controllers\DataSampleController::class, 'exportExcel'])->name('sample.exportExcel');
         });
     });
 

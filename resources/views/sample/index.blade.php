@@ -34,9 +34,73 @@
                                 <label for="sample_type">Sample Type</label>
                                 <input type="text" name="sample_type" id="sample_type" class="form-control" value="{{ request('sample_type') }}" placeholder="Cari Sample Type">
                             </div>
-                            <div class="form-group align-self-end">
+                            <div class="form-group align-self-end d-flex gap-2">
                                 <button type="submit" class="btn btn-primary">Search</button>
+                                <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#filterModal">Filter</button>
+                                <a href="#" id="exportExcelBtn" class="btn btn-success">Export Excel</a>
                             </div>
+@push('scripts')
+<script>
+    $(document).ready(function() {
+        $('#exportExcelBtn').on('click', function(e) {
+            e.preventDefault();
+            // Ambil semua parameter filter dari form utama dan modal
+            var params = {};
+            // dari form utama
+            params.no_sample = $('#no_sample').val();
+            params.sample_type = $('#sample_type').val();
+            // dari modal (jika sudah pernah diisi)
+            params.so_number = $('#filter_so_number').val();
+            params.customer = $('#filter_customer').val();
+            params.barcode = $('#filter_barcode').val();
+            params.marketing = $('#filter_marketing').val();
+            // Build query string
+            var query = $.param(params);
+            var url = "{{ route('sample.exportExcel') }}?" + query;
+            window.location.href = url;
+        });
+    });
+</script>
+@endpush
+                    <!-- Filter Modal -->
+                    <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="filterModalLabel">Advanced Filter</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <form method="GET" action="{{ route('sample.index') }}">
+                                    <div class="modal-body">
+                                        <div class="mb-3">
+                                            <label for="filter_so_number" class="form-label">SO Number</label>
+                                            <input type="text" class="form-control" id="filter_so_number" name="so_number" value="{{ request('so_number') }}" placeholder="Search SO Number">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="filter_customer" class="form-label">Customer</label>
+                                            <input type="text" class="form-control" id="filter_customer" name="customer" value="{{ request('customer') }}" placeholder="Search Customer">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="filter_barcode" class="form-label">Barcode</label>
+                                            <input type="text" class="form-control" id="filter_barcode" name="barcode" value="{{ request('barcode') }}" placeholder="Search Barcode">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="filter_marketing" class="form-label">Marketing</label>
+                                            <input type="text" class="form-control" id="filter_marketing" name="marketing" value="{{ request('marketing') }}" placeholder="Search Marketing">
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="submit" class="btn btn-primary">Apply Filter</button>
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    </div>
+                                </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                         </form>
                     </div>
                     <div class="card-body">
