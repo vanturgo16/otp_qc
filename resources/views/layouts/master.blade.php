@@ -176,6 +176,7 @@
                             </a>
                         </li>
 
+
                         @can('PPIC')
                             <li class="{{ request()->is('ppic/*') ? 'mm-active' : '' }}">
                                 <a href="javascript: void(0);" class="has-arrow">
@@ -185,6 +186,7 @@
                                 <ul class="sub-menu" aria-expanded="false">
                                     @can('PPIC_workOrder')
                                         <li><a href="{{ url('data-sample/') }}" data-key="t-blog-grid">Data Sample</a></li>
+                                        <li><a href="{{ url('lpts/') }}" data-key="t-blog-grid">Data LPTS</a></li>
                                     @endcan
 
                                     @can('PPIC_good-receipt-note')
