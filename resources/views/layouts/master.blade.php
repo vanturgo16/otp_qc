@@ -33,7 +33,7 @@
     <link href="{{ asset('assets/libs/choices.js/public/assets/styles/choices.min.css') }}" id="app-style" rel="stylesheet" type="text/css" />
 
     {{-- Jquery --}}
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
@@ -174,6 +174,10 @@
                                 <span data-key="t-blog">Data Produk</span>
                             </a>
                             <ul class="sub-menu" aria-expanded="false">
+                                @can('PPIC_workOrder')
+                                <li><a href="{{ url('data-sample/') }}" data-key="t-blog-grid">Data Sample</a></li>
+                                @endcan
+
                                 @can('PPIC_good-receipt-note')
                                 <li><a href="/history-stok" data-key="t-blog-grid">History Stock</a></li>
                                 @endcan
@@ -184,10 +188,6 @@
 
                                 @can('PPIC_external-no-lot')
                                 <li><a href="/external-no-lot" data-key="t-blog-grid">Return Customer</a></li>
-                                @endcan
-
-                                @can('PPIC_workOrder')
-                                <li><a href="{{ url('') }}" data-key="t-blog-grid">Sample</a></li>
                                 @endcan
 
                                 {{-- <li><a href="{{ route('ppic.workOrder.index') }}"
