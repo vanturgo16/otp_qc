@@ -185,7 +185,6 @@
                                 <ul class="sub-menu" aria-expanded="false">
                                     @can('PPIC_workOrder')
                                         <li><a href="{{ url('data-sample/') }}" data-key="t-blog-grid">Data Sample</a></li>
-                                        <li><a href="{{ url('data-sample/') }}" data-key="t-blog-grid">LPTS</a></li>
                                     @endcan
 
                                     @can('PPIC_good-receipt-note')
@@ -529,7 +528,7 @@
                 icon: 'error',
                 title: 'Oops...',
                 text: '{{ session('
-                            sweet_error ') }}',
+                                            sweet_error ') }}',
                 timer: 3000,
                 showConfirmButton: false
             });
