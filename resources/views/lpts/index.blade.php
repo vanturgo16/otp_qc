@@ -151,6 +151,7 @@
                                         <th>Group Sub</th>
                                         <th>QTY</th>
                                         <th>Unit</th>
+                                        <th>Weight</th>
                                         <th>Date Report</th>
                                         <th>Status</th>
                                         <th>Keterangan</th>
@@ -171,50 +172,62 @@
                                             <td>{{ $data->group_sub_name ?? '-' }}</td>
                                             <td>{{ $data->qty ?? '-' }}</td>
                                             <td>{{ $data->unit ?? '-' }}</td>
-                                            <td>{{ $data->created_at ?? '-' }}</td>
+                                            <td>{{ $data->weight ?? '-' }}</td>
+                                            <td>{{ $data->created_at_formatted ?? '-' }}</td>
                                             <td>{{ $data->status ?? '-' }}</td>
-                                            <td><!-- Tombol buka modal -->
-                                                <button type="button" class="btn btn-sm btn-success"
-                                                    data-bs-toggle="modal"
-                                                    data-bs-target="#modalKeterangan{{ $data->work_order_id }}">
-                                                    Add Keterangan
-                                                </button>
-                                                <!-- Modal keterangan -->
-                                                <div class="modal fade" id="modalKeterangan{{ $data->work_order_id }}"
-                                                    tabindex="-1" aria-labelledby="modalLabel{{ $data->work_order_id }}"
-                                                    aria-hidden="true">
-                                                    <div class="modal-dialog">
-                                                        <form action="{{ route('lpts.keterangan') }}" method="POST">
-                                                            @csrf
-                                                            <input type="hidden" name="no_lpts"
-                                                                value="{{ $data->no_lpts }}">
-                                                            <input type="hidden" name="id_wo"
-                                                                value="{{ $data->work_order_id }}">
-                                                            <div class="modal-content">
-                                                                <div class="modal-header">
-                                                                    <h5 class="modal-title"
-                                                                        id="modalLabel{{ $data->work_order_id }}">Tambah
-                                                                        Keterangan LPTS</h5>
-                                                                    <button type="button" class="btn-close"
-                                                                        data-bs-dismiss="modal"></button>
+                                            <td>
+                                                @if (!empty($data->keterangan))
+                                                    {{ $data->keterangan }}
+                                                @else
+                                                    <!-- Tombol buka modal Add Keterangan -->
+                                                    <button type="button" class="btn btn-sm btn-success"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#modalKeterangan{{ $data->work_order_id }}">
+                                                        Add Keterangan
+                                                    </button>
+                                                    <!-- Modal keterangan -->
+                                                    <div class="modal fade"
+                                                        id="modalKeterangan{{ $data->work_order_id }}" tabindex="-1"
+                                                        aria-labelledby="modalLabel{{ $data->work_order_id }}"
+                                                        aria-hidden="true">
+                                                        <div class="modal-dialog">
+                                                            <form action="{{ route('lpts.keterangan') }}" method="POST">
+                                                                @csrf
+                                                                <input type="hidden" name="no_lpts"
+                                                                    value="{{ $data->no_lpts }}">
+                                                                <input type="hidden" name="id_wo"
+                                                                    value="{{ $data->work_order_id }}">
+                                                                <div class="modal-content">
+                                                                    <div class="modal-header">
+                                                                        <h5 class="modal-title"
+                                                                            id="modalLabel{{ $data->work_order_id }}">
+                                                                            Tambah Keterangan LPTS</h5>
+                                                                        <button type="button" class="btn-close"
+                                                                            data-bs-dismiss="modal"></button>
+                                                                    </div>
+                                                                    <div class="modal-body">
+                                                                        <textarea name="keterangan" class="form-control" rows="4" required></textarea>
+                                                                    </div>
+                                                                    <div class="modal-footer">
+                                                                        <button type="submit"
+                                                                            class="btn btn-primary">Simpan</button>
+                                                                        <button type="button" class="btn btn-secondary"
+                                                                            data-bs-dismiss="modal">Batal</button>
+                                                                    </div>
                                                                 </div>
-                                                                <div class="modal-body">
-                                                                    <textarea name="keterangan" class="form-control" rows="4" required></textarea>
-                                                                </div>
-                                                                <div class="modal-footer">
-                                                                    <button type="submit"
-                                                                        class="btn btn-primary">Simpan</button>
-                                                                    <button type="button" class="btn btn-secondary"
-                                                                        data-bs-dismiss="modal">Batal</button>
-                                                                </div>
-                                                            </div>
-                                                        </form>
+                                                            </form>
+                                                        </div>
                                                     </div>
-                                                </div>
+                                                @endif
                                             </td>
                                             <td>
-                                                <a href="" class="btn btn-sm btn-primary" target="_blank">Print
-                                                    PDF</a>
+                                                @if ($data->can_print)
+                                                    <a href="{{ route('lpts.print', $data->work_order_id) }}"
+                                                        class="btn btn-sm btn-primary" target="_blank">
+                                                        Print PDF
+                                                    </a>
+                                                @endif
+
                                                 <a href="" class="btn btn-sm btn-warning">Edit</a>
                                             </td>
                                         </tr>

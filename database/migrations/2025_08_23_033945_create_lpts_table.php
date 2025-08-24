@@ -13,8 +13,10 @@ return new class extends Migration
     {
         Schema::create('lpts', function (Blueprint $table) {
           $table->id();
-    $table->string('no_lpts')->unique();
+    $table->string('no_lpts');
     $table->unsignedBigInteger('id_wo');
+     $table->string('no_wo');
+     $table->string('barcode_number');
     $table->text('keterangan')->nullable();
     $table->string('created_by')->nullable();
     $table->timestamps(); // created_at & updated_at otomatis
