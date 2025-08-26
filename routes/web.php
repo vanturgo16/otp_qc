@@ -17,6 +17,7 @@ use App\Http\Controllers\warehouse\DeliveryNoteController;
 
 //PRODUCTION
 use App\Http\Controllers\ProductionController;
+use App\Http\Controllers\ReturnCustomerPPIC;
 
 //Route Login
 Route::get('/', [AuthController::class, 'login'])->name('login');
@@ -56,6 +57,15 @@ Route::middleware(['auth', 'clear.permission.cache', 'permission:PPIC'])->group(
             Route::post('/keterangan', [LptsController::class, 'storeKeterangan'])->name('lpts.keterangan');
             Route::get('/print/{work_order_id}', [LptsController::class, 'printLpts'])->name('lpts.print');
             Route::get('/export-excel', [LptsController::class, 'exportExcel'])->name('lpts.exportExcel');
+        });
+    });
+
+    Route::controller(ReturnCustomerPPIC::class)->group(function () {
+        Route::prefix('return-customer-ppic')->group(function () {
+            Route::get('/', 'index')->name('return-customer-ppic.index');
+            Route::post('/store', [ReturnCustomerPPIC::class, 'store'])->name('return-customer-ppic.store');
+            Route::get('/print/{work_order_id}', [ReturnCustomerPPIC::class, 'printReturn'])->name('return-customer-ppic.print');
+            Route::get('/export-excel', [ReturnCustomerPPIC::class, 'exportExcel'])->name('return-customer-ppic.exportExcel');
         });
     });
 
