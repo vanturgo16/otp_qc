@@ -52,16 +52,18 @@
                                                 // Ambil semua parameter filter dari form utama dan modal
                                                 var params = {};
                                                 // dari form utama
-                                                params.no_sample = $('#no_sample').val();
-                                                params.sample_type = $('#sample_type').val();
-                                                // dari modal (jika sudah pernah diisi)
-                                                params.so_number = $('#filter_so_number').val();
-                                                params.customer = $('#filter_customer').val();
-                                                params.barcode = $('#filter_barcode').val();
-                                                params.marketing = $('#filter_marketing').val();
+                                                params.no_lpts = $('#no_lpts').val();
+                                                params.type_product = $('#type_product').val();
+                                                // dari modal
+                                                params.packing_number = $('#filter_report').val();
+                                                params.barcode_number = $('#filter_barcode').val();
+                                                params.group_sub_name = $('#filter_group_sub').val();
+                                                params.thickness = $('#filter_thickness').val();
+                                                params.date_from = $('#date_from').val();
+                                                params.date_to = $('#date_to').val();
                                                 // Build query string
                                                 var query = $.param(params);
-                                                var url = "{{ route('sample.exportExcel') }}?" + query;
+                                                var url = "{{ route('lpts.exportExcel') }}?" + query;
                                                 window.location.href = url;
                                             });
                                         });
@@ -135,7 +137,7 @@
                         </div>
                         </form>
                     </div>
-                    <div class="">
+                    <div class="card-body">
                         <div class="table-responsive " style="overflow-x: auto;">
                             <table id="lptsTable" class="table table-bordered table-striped nowrap">
                                 <thead>
@@ -175,9 +177,9 @@
                                             <td>{{ $data->weight ?? '-' }}</td>
                                             <td>{{ $data->created_at_formatted ?? '-' }}</td>
                                             <td>{{ $data->status ?? '-' }}</td>
-                                            <td>
+                                            <td style="min-width: 350px;" class="text-wrap text-center">
                                                 @if (!empty($data->keterangan))
-                                                    {{ $data->keterangan }}
+                                                    <span class="text-justify">{{ $data->keterangan }}</span>
                                                 @else
                                                     <!-- Tombol buka modal Add Keterangan -->
                                                     <button type="button" class="btn btn-sm btn-success"
@@ -207,6 +209,10 @@
                                                                     </div>
                                                                     <div class="modal-body">
                                                                         <textarea name="keterangan" class="form-control" rows="4" required></textarea>
+                                                                        @if ($errors->has('keterangan'))
+                                                                            <div class="text-danger">
+                                                                                {{ $errors->first('keterangan') }}</div>
+                                                                        @endif
                                                                     </div>
                                                                     <div class="modal-footer">
                                                                         <button type="submit"

@@ -90,7 +90,8 @@
                     <tr>
                         <td>Tanggal</td>
                         <td style="border-bottom:1px solid #000;">:
-                            <span>{{ $data->created_at_formatted ?? '-' }}</span></td>
+                            <span>{{ $data->created_at_formatted ?? '-' }}</span>
+                        </td>
                     </tr>
                     <tr>
                         <td>Nama Produk</td>
@@ -115,10 +116,14 @@
         <tr>
             <td style="padding:6px; border-top:1px solid #000;">Ketidaksesuaian</td>
             <td style="padding:6px; border-top:1px solid #000;">
-                <div class="line"></div>
-                <div class="line"></div>
-                <div class="line"></div>
-                <div class="line"></div>
+                @if ($data->keterangan)
+                    :<span style="margin-left: 3px">{{ $data->keterangan }}</span>
+                @else
+                    <div class="line"></div>
+                    <div class="line"></div>
+                    <div class="line"></div>
+                @endif
+
             </td>
         </tr>
     </table>
@@ -131,7 +136,7 @@
                 <table>
                     <tr>
                         <td class="label no-border">Ukuran</td>
-                        <td style="border-bottom:1px solid #000;">&nbsp;</td>
+                        <td style="border-bottom:1px solid #000;"></td>
                     </tr>
                     <tr>
                         <td class="no-border">Jumlah</td>
@@ -139,7 +144,7 @@
                     </tr>
                     <tr>
                         <td class="no-border">Total Order</td>
-                        <td style="border-bottom:1px solid #000;">&nbsp;</td>
+                        <td style="border-bottom:1px solid #000;"><span>{{ $data->qty ?? '-' }}</span></td>
                     </tr>
                     <tr>
                         <td>% Ketidaksesuaian</td>

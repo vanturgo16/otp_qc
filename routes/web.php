@@ -55,6 +55,7 @@ Route::middleware(['auth', 'clear.permission.cache', 'permission:PPIC'])->group(
             Route::get('/', 'index')->name('lpts.index');
             Route::post('/keterangan', [LptsController::class, 'storeKeterangan'])->name('lpts.keterangan');
             Route::get('/print/{work_order_id}', [LptsController::class, 'printLpts'])->name('lpts.print');
+            Route::get('/export-excel', [LptsController::class, 'exportExcel'])->name('lpts.exportExcel');
         });
     });
 
