@@ -6,6 +6,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DataSampleController;
 use App\Http\Controllers\GrnController;
+use App\Http\Controllers\LptsController;
 use App\Http\Controllers\qc\CoaController;
 use App\Http\Controllers\qc\HistorystokController;
 use App\Http\Controllers\user\PermissionController;
@@ -46,6 +47,15 @@ Route::middleware(['auth', 'clear.permission.cache', 'permission:PPIC'])->group(
             Route::post('/update/{id_so}', 'update')->name('sample.update');
             Route::get('/print-pdf/{id_so}', 'printPdf')->name('sample.printPdf');
             Route::get('/export-excel', [App\Http\Controllers\DataSampleController::class, 'exportExcel'])->name('sample.exportExcel');
+        });
+    });
+
+    Route::controller(LptsController::class)->group(function () {
+        Route::prefix('lpts')->group(function () {
+            Route::get('/', 'index')->name('lpts.index');
+            Route::post('/keterangan', [LptsController::class, 'storeKeterangan'])->name('lpts.keterangan');
+            Route::get('/print/{work_order_id}', [LptsController::class, 'printLpts'])->name('lpts.print');
+            Route::get('/export-excel', [LptsController::class, 'exportExcel'])->name('lpts.exportExcel');
         });
     });
 
