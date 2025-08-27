@@ -21,8 +21,8 @@ class  CreateReturnCustomersPpicsTable extends Migration
             $table->string('name')->nullable(); // Nama produk
             $table->decimal('qty', 10, 3)->nullable();
             $table->unsignedBigInteger('id_master_units')->nullable();
-            $table->date('tanggal')->nullable();
-            $table->integer('berat')->nullable();
+            $table->date('date_return')->nullable();
+            $table->integer('weight')->nullable();
             $table->text('keterangan')->nullable();
             $table->timestamps();
 

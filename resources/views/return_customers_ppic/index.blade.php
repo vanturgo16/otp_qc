@@ -191,33 +191,40 @@
                                     @endpush
                                 </div>
                             </div>
-                            <form action="{{ route('return-customer-ppic.index') }}" method="GET" class="d-flex">
-                                <div class="form-group me-2">
-                                    <label for="no_lpts">No LPTS</label>
-                                    <input type="text" name="no_lpts" id="no_lpts" class="form-control"
-                                        value="{{ request('no_lpts') }}" placeholder="Cari No LPTS">
-                                </div>
-                                <div class="form-group me-2">
-                                    <label for="type_product">Type Product</label>
-                                    <input type="text" name="type_product" id="type_product" class="form-control"
-                                        value="{{ request('type_product') }}" placeholder="Cari Type Product">
-                                </div>
-                                <div class="form-group align-self-end d-flex gap-2">
+                            <form action="{{ route('return-customer-ppic.index') }}" method="GET">
+                                <div class="d-flex justify-content-between align-items-end w-100 gap-2">
+                                    <div class="d-flex gap-2">
+                                        <div class="form-group me-2">
+                                            <label for="no_dn">No DN</label>
+                                            <input type="text" name="no_dn" id="no_dn" class="form-control"
+                                                value="{{ request('no_dn') }}" placeholder="Cari No DN">
+                                        </div>
+                                        <div class="form-group me-2">
+                                            <label for="product_name">Product Name</label>
+                                            <input type="text" name="product_name" id="product_name"
+                                                class="form-control" value="{{ request('product_name') }}"
+                                                placeholder="Cari Product Name">
+                                        </div>
 
-                                    <!-- Tombol Add Data -->
-                                    <button type="button" class="btn btn-success" data-bs-toggle="modal"
-                                        data-bs-target="#modalAddReturn">
-                                        Add Data
-                                    </button>
-
-
-                                    <button type="submit" class="btn btn-primary">Search</button>
-                                    <button type="button" class="btn btn-secondary " data-bs-toggle="modal"
-                                        data-bs-target="#filterModalLpts">
-                                        <i class="mdi mdi-filter-variant"></i> Filter
-                                    </button>
-                                    <a href="#" id="exportExcelBtn" class="btn btn-success">Export Excel</a>
+                                        <div class="align-self-end">
+                                            <button type="submit" class="btn btn-primary">Search</button>
+                                            <button type="button" class="btn btn-secondary" data-bs-toggle="modal"
+                                                data-bs-target="#filterModalReturn">
+                                                <i class="mdi mdi-filter-variant"></i> Filter
+                                            </button>
+                                            <a href="#" id="exportExcelBtn" class="btn btn-success">Export
+                                                Excel</a>
+                                        </div>
+                                    </div>
+                                    <!-- Tombol kanan sendiri (Add Data) -->
+                                    <div>
+                                        <button type="button" class="btn btn-info" data-bs-toggle="modal"
+                                            data-bs-target="#modalAddReturn">
+                                            Add Data
+                                        </button>
+                                    </div>
                                 </div>
+
                                 @push('scripts')
                                     <script>
                                         $(document).ready(function() {
@@ -226,31 +233,31 @@
                                                 // Ambil semua parameter filter dari form utama dan modal
                                                 var params = {};
                                                 // dari form utama
-                                                params.no_lpts = $('#no_lpts').val();
-                                                params.type_product = $('#type_product').val();
+                                                params.no_dn = $('#no_dn').val();
+                                                params.product_name = $('#product_name').val();
                                                 // dari modal
-                                                params.packing_number = $('#filter_report').val();
-                                                params.barcode_number = $('#filter_barcode').val();
-                                                params.group_sub_name = $('#filter_group_sub').val();
-                                                params.thickness = $('#filter_thickness').val();
+                                                params.dn_number = $('#filter_dn_number').val();
+                                                params.customer_name = $('#filter_customer_name').val();
+                                                params.no_po = $('#filter_no_po').val();
+                                                params.so_number = $('#filter_so_number').val();
                                                 params.date_from = $('#date_from').val();
                                                 params.date_to = $('#date_to').val();
                                                 // Build query string
                                                 var query = $.param(params);
-                                                var url = "{{ route('lpts.exportExcel') }}?" + query;
+                                                var url = "{{ route('return-customer-ppic.exportExcel') }}?" + query;
                                                 window.location.href = url;
                                             });
                                         });
                                     </script>
                                 @endpush
-                                <!-- Modal Filter LPTS -->
-                                <div class="modal fade" id="filterModalLpts" tabindex="-1"
-                                    aria-labelledby="filterModalLptsLabel" aria-hidden="true">
+                                <!-- Modal Filter Return Customer -->
+                                <div class="modal fade" id="filterModalReturn" tabindex="-1"
+                                    aria-labelledby="filterModalReturnLabel" aria-hidden="true">
                                     <div class="modal-dialog">
-                                        <form method="GET" action="{{ route('lpts.index') }}">
+                                        <form method="GET" action="{{ route('return-customer-ppic.index') }}">
                                             <div class="modal-content">
                                                 <div class="modal-header bg-primary text-white">
-                                                    <h5 class="modal-title" id="filterModalLptsLabel">
+                                                    <h5 class="modal-title" id="filterModalReturnLabel">
                                                         <i class="mdi mdi-filter-variant"></i> Search & Filter
                                                     </h5>
                                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
@@ -258,41 +265,43 @@
                                                 </div>
                                                 <div class="modal-body">
                                                     <div class="mb-3">
-                                                        <label for="filter_report" class="form-label">Report</label>
-                                                        <input type="text" class="form-control" id="filter_report"
-                                                            name="packing_number" placeholder="Report Number..."
-                                                            value="{{ request('packing_number') }}">
+                                                        <label for="filter_dn_number" class="form-label">No DN</label>
+                                                        <input type="text" class="form-control" id="filter_dn_number"
+                                                            name="dn_number" placeholder="No DN..."
+                                                            value="{{ request('dn_number') }}">
                                                     </div>
                                                     <div class="mb-3">
-                                                        <label for="filter_barcode" class="form-label">Barcode</label>
-                                                        <input type="text" class="form-control" id="filter_barcode"
-                                                            name="barcode_number" placeholder="Barcode..."
-                                                            value="{{ request('barcode_number') }}">
+                                                        <label for="filter_customer_name"
+                                                            class="form-label">Customer</label>
+                                                        <input type="text" class="form-control"
+                                                            id="filter_customer_name" name="customer_name"
+                                                            placeholder="Customer Name..."
+                                                            value="{{ request('customer_name') }}">
                                                     </div>
                                                     <div class="mb-3">
-                                                        <label for="filter_group_sub" class="form-label">Grup Sub</label>
-                                                        <input type="text" class="form-control" id="filter_group_sub"
-                                                            name="group_sub_name" placeholder="Group Sub..."
-                                                            value="{{ request('group_sub_name') }}">
+                                                        <label for="filter_no_po" class="form-label">No PO</label>
+                                                        <input type="text" class="form-control" id="filter_no_po"
+                                                            name="no_po" placeholder="No PO..."
+                                                            value="{{ request('no_po') }}">
                                                     </div>
                                                     <div class="mb-3">
-                                                        <label for="filter_thickness" class="form-label">Tiknes</label>
-                                                        <input type="text" class="form-control" id="filter_thickness"
-                                                            name="thickness" placeholder="Thickness..."
-                                                            value="{{ request('thickness') }}">
+                                                        <label for="filter_so_number" class="form-label">No SO</label>
+                                                        <input type="text" class="form-control" id="filter_so_number"
+                                                            name="so_number" placeholder="No SO..."
+                                                            value="{{ request('so_number') }}">
                                                     </div>
                                                     <div class="mb-3">
-                                                        <label class="form-label">Date Report</label>
+                                                        <label class="form-label">Tanggal Return</label>
                                                         <div class="row g-2">
                                                             <div class="col-md-6">
-                                                                <label for="date_from" class="form-label">Tanggal
-                                                                    Dari</label>
+                                                                <label for="date_from" class="form-label">Dari
+                                                                    Tanggal</label>
                                                                 <input type="date" class="form-control" id="date_from"
                                                                     name="date_from" value="{{ request('date_from') }}">
                                                             </div>
                                                             <div class="col-md-6">
                                                                 <label for="date_to" class="form-label">Sampai
-                                                                    Dari</label>
+                                                                    Tanggal</label>
                                                                 <input type="date" class="form-control" id="date_to"
                                                                     name="date_to" value="{{ request('date_to') }}">
                                                             </div>
@@ -326,13 +335,14 @@
                                         <th>Unit</th>
                                         <th>Berat</th>
                                         <th>Keterangan</th>
+                                        <th>Action</th>
 
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach ($returns as $return)
                                         <tr>
-                                            <td>{{ $return->tanggal }}</td>
+                                            <td>{{ $return->date_return }}</td>
                                             <td>{{ $return->dn_number }}</td>
                                             <td>{{ $return->customer_name }}</td>
                                             <td>{{ $return->no_po }}</td>
@@ -340,8 +350,13 @@
                                             <td>{{ $return->name }}</td>
                                             <td>{{ $return->qty }}</td>
                                             <td>{{ $return->unit }}</td>
-                                            <td>{{ $return->berat }}</td>
+                                            <td>{{ $return->weight }}</td>
                                             <td>{{ $return->keterangan }}</td>
+
+                                            <td><a href="{{ route('return-customer-ppic.print', $return->id_delivery_note_details) }}"
+                                                    class="btn btn-primary" target="_blank">Print PDF</a>
+                                                <a class="btn btn-info " target="_blank">Scrap</a>
+                                            </td>
                                         </tr>
                                     @endforeach
                                 </tbody>

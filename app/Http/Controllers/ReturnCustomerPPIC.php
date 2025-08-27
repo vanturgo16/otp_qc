@@ -4,13 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\ReturnCustomersPpic;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use PhpParser\Node\Stmt\Return_;
+use App\Exports\ReturnCustomerPpicExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ReturnCustomerPPIC extends Controller
 {
-public function index()
+public function index( Request $request)
 {
     $dn_details = DB::table('delivery_note_details as dn_details')
         ->leftJoin('delivery_notes as dn', 'dn_details.id', '=', 'dn.id')
@@ -41,7 +44,8 @@ public function index()
     $returns = ReturnCustomersPpic::leftjoin('master_customers as mc', 'return_customers_ppic.id_master_customers', '=', 'mc.id')
         ->leftJoin('sales_orders as so', 'return_customers_ppic.id_sales_orders', '=', 'so.id')
         ->leftJoin('master_units as mu', 'return_customers_ppic.id_master_units', '=', 'mu.id')
-        ->leftJoin('delivery_notes as dn', 'return_customers_ppic.id_delivery_notes', '=', 'dn.id')
+        ->leftJoin('delivery_note_details as dn_details', 'return_customers_ppic.id_delivery_note_details', '=', 'dn_details.id')
+        ->leftJoin('delivery_notes as dn', 'dn_details.id_delivery_notes', '=', 'dn.id')
         ->select(
             'return_customers_ppic.*',
             'mc.name as customer_name',
@@ -49,9 +53,38 @@ public function index()
             'mu.unit',
             'dn.dn_number'
 
-        )
-        ->orderBy('return_customers_ppic.created_at', 'desc')
-        ->get();
+
+        );
+        // Filter dari request
+    if ($request->dn_number) {
+        $returns->where('dn.dn_number', 'like', '%' . $request->dn_number . '%');
+    }
+    if ($request->customer_name) {
+        $returns->where('mc.name', 'like', '%' . $request->customer_name . '%');
+    }
+    if ($request->no_po) {
+        $returns->where('return_customers_ppic.no_po', 'like', '%' . $request->no_po . '%');
+    }
+    if ($request->so_number) {
+        $returns->where('so.so_number', 'like', '%' . $request->so_number . '%');
+    }
+    if ($request->date_from && $request->date_to) {
+        $returns->whereBetween('return_customers_ppic.date_return', [$request->date_from, $request->date_to]);
+    } elseif ($request->date_from) {
+        $returns->where('return_customers_ppic.date_return', '>=', $request->date_from);
+    } elseif ($request->date_to) {
+        $returns->where('return_customers_ppic.date_return', '<=', $request->date_to);
+    }
+
+     if ($request->no_dn) {
+        $returns->where('dn.dn_number', 'like', '%' . $request->no_dn . '%');
+    }
+    if ($request->product_name) {
+        $returns->where('return_customers_ppic.name', 'like', '%' . $request->product_name . '%');
+    }
+
+    $returns = $returns->orderBy('return_customers_ppic.created_at', 'desc')->get();
+        dump($returns);
 
     return view('return_customers_ppic.index', compact('dn_details', 'returns'));
 }
@@ -84,13 +117,92 @@ ReturnCustomersPpic::create([
     'name' => $request->name,
     'qty' => $request->qty,
     'id_master_units' => $request->id_master_units,
-    'tanggal' => $request->tanggal,
-    'berat' => $request->berat,
+    'date_return' => $request->tanggal,
+    'weight' => $request->berat,
     'keterangan' => $request->keterangan,
     'created_at' => now(),
     'updated_at' => now(),
 ]);
 
     return redirect()->route('return-customer-ppic.index')->with('pesan', 'Data return customer berhasil disimpan!');
+}
+
+public function printReturn($id_delivery_note_details)
+{
+    // Ambil semua data return customer yang terkait dengan detail DN tertentu
+    // Join ke master_customers, sales_orders, master_units, delivery_note_details, dan delivery_notes
+    $datas = ReturnCustomersPpic::leftjoin('master_customers as mc', 'return_customers_ppic.id_master_customers', '=', 'mc.id')
+        ->leftJoin('sales_orders as so', 'return_customers_ppic.id_sales_orders', '=', 'so.id')
+        ->leftJoin('master_units as mu', 'return_customers_ppic.id_master_units', '=', 'mu.id')
+        ->leftJoin('delivery_note_details as dn_details', 'return_customers_ppic.id_delivery_note_details', '=', 'dn_details.id')
+        ->leftJoin('delivery_notes as dn', 'dn_details.id_delivery_notes', '=', 'dn.id')
+        ->select(
+            'return_customers_ppic.*',
+            'mc.name as customer_name',
+            'so.so_number',
+            'mu.unit',
+            'dn.dn_number'
+        )
+        // Filter hanya data return dengan id_delivery_note_details yang dipilih
+        ->where('return_customers_ppic.id_delivery_note_details', $id_delivery_note_details)
+        ->orderBy('so.so_number')
+        ->get();
+
+    // Ambil data customer, tanggal, dan nomor DN dari data pertama (untuk header laporan)
+    $customer = $datas->first()->customer_name ?? '';
+    $tanggal = $datas->first()->created_at ?? '';
+    $dn_number = $datas->first()->dn_number ?? '';
+
+    // Generate PDF menggunakan blade print dan kirim data yang dibutuhkan
+    $pdf = Pdf::loadView('return_customers_ppic.print', compact('datas', 'customer', 'tanggal', 'dn_number'));
+    return $pdf->stream('return_customers_ppic.pdf');
+}
+
+public function exportExcel(Request $request)
+{
+    // Query sama seperti index, filter sesuai request
+    $returns = ReturnCustomersPpic::leftjoin('master_customers as mc', 'return_customers_ppic.id_master_customers', '=', 'mc.id')
+        ->leftJoin('sales_orders as so', 'return_customers_ppic.id_sales_orders', '=', 'so.id')
+        ->leftJoin('master_units as mu', 'return_customers_ppic.id_master_units', '=', 'mu.id')
+        ->leftJoin('delivery_note_details as dn_details', 'return_customers_ppic.id_delivery_note_details', '=', 'dn_details.id')
+        ->leftJoin('delivery_notes as dn', 'dn_details.id_delivery_notes', '=', 'dn.id')
+        ->select(
+            'return_customers_ppic.*',
+            'mc.name as customer_name',
+            'so.so_number',
+            'mu.unit',
+            'dn.dn_number'
+        );
+
+    // Filter dari request
+    if ($request->dn_number) {
+        $returns->where('dn.dn_number', 'like', '%' . $request->dn_number . '%');
+    }
+    if ($request->customer_name) {
+        $returns->where('mc.name', 'like', '%' . $request->customer_name . '%');
+    }
+    if ($request->no_po) {
+        $returns->where('return_customers_ppic.no_po', 'like', '%' . $request->no_po . '%');
+    }
+    if ($request->so_number) {
+        $returns->where('so.so_number', 'like', '%' . $request->so_number . '%');
+    }
+    if ($request->date_from && $request->date_to) {
+        $returns->whereBetween('return_customers_ppic.date_return', [$request->date_from, $request->date_to]);
+    } elseif ($request->date_from) {
+        $returns->where('return_customers_ppic.date_return', '>=', $request->date_from);
+    } elseif ($request->date_to) {
+        $returns->where('return_customers_ppic.date_return', '<=', $request->date_to);
+    }
+    if ($request->no_dn) {
+        $returns->where('dn.dn_number', 'like', '%' . $request->no_dn . '%');
+    }
+    if ($request->product_name) {
+        $returns->where('return_customers_ppic.name', 'like', '%' . $request->product_name . '%');
+    }
+
+    $returns = $returns->orderBy('return_customers_ppic.created_at', 'desc')->get();
+
+    return Excel::download(new ReturnCustomerPpicExport($returns), 'return_customer_ppic.xlsx');
 }
 }
