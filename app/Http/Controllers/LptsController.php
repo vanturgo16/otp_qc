@@ -60,7 +60,7 @@ class LptsController extends Controller
             'mpf.thickness',
             'mgs.name as group_sub_name',
             'mu.unit',
-            DB::raw("'0' as weight")
+              'mpf.weight'
         )
         ->get();
 
@@ -165,7 +165,7 @@ class LptsController extends Controller
             'mpf.thickness',
             'mgs.name as group_sub_name',
             'mu.unit',
-            DB::raw("'0' as weight")
+           'mpf.weight'
         )
         ->limit(100)
         ->get();

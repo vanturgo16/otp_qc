@@ -177,11 +177,11 @@
 
             <td class="no-border" style="text-align:center; width:30%;">
                 Dilaporkan,<br><br><br><br><br>
-                ( <span style="display:inline-block; width:80px; "> QC </span> )
+                ( <span style="display:inline-block; width:80px; "> </span> )
             </td>
             <td class="no-border" style="text-align:center; width:30%;">
                 Dilaporkan,<br><br><br><br><br>
-                ( <span style="display:inline-block; width:80px; "> QC </span> )
+                ( <span style="display:inline-block; width:80px; "> </span> )
             </td>
         </tr>
     </table>
@@ -203,7 +203,7 @@
 
             <td class="no-border" style="text-align:center; width:30%;">
                 Dilaporkan,<br><br><br><br><br>
-                ( <span style="display:inline-block; width:80px; "> QC </span> )
+                ( <span style="display:inline-block; width:80px; "> </span> )
             </td>
         </tr>
     </table>
@@ -225,7 +225,7 @@
 
             <td class="no-border" style="text-align:center; width:30%;">
                 Dilaporkan,<br><br><br><br><br>
-                ( <span style="display:inline-block; width:80px; "> QC </span> )
+                ( <span style="display:inline-block; width:80px; "> </span> )
             </td>
         </tr>
     </table>
