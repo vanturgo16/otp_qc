@@ -358,14 +358,49 @@
                                                     class="btn btn-primary" target="_blank">Print PDF</a>
 
                                                 @if ($return->qc_status !== 'scrap')
-                                                    <form action="{{ route('return-customer-ppic.scrap', $return->id) }}"
-                                                        method="POST" style="display:inline;">
-                                                        @csrf
-                                                        <button type="submit" class="btn btn-danger"
-                                                            onclick="return confirm('Yakin scrap data ini? Data akan masuk ke tabel Waste dan status QC jadi Scrap!')">
-                                                            Scrap
-                                                        </button>
-                                                    </form>
+                                                    <!-- Tombol Scrap buka modal -->
+                                                    <button type="button" class="btn btn-danger btn-sm"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#modalScrap{{ $return->id }}">
+                                                        Scrap
+                                                    </button>
+                                                    <!-- Modal Scrap -->
+                                                    <div class="modal fade" id="modalScrap{{ $return->id }}"
+                                                        tabindex="-1"
+                                                        aria-labelledby="modalScrapLabel{{ $return->id }}"
+                                                        aria-hidden="true">
+                                                        <div class="modal-dialog">
+                                                            <form
+                                                                action="{{ route('return-customer-ppic.scrap', $return->id) }}"
+                                                                method="POST">
+                                                                @csrf
+                                                                <div class="modal-content">
+                                                                    <div class="modal-header">
+                                                                        <h5 class="modal-title"
+                                                                            id="modalScrapLabel{{ $return->id }}">
+                                                                            Scrap Data Return Customer
+                                                                        </h5>
+                                                                        <button type="button" class="btn-close"
+                                                                            data-bs-dismiss="modal"></button>
+                                                                    </div>
+                                                                    <div class="modal-body">
+                                                                        <label for="waste_date{{ $return->id }}">Tanggal
+                                                                            Scrap</label>
+                                                                        <input type="date" name="waste_date"
+                                                                            id="waste_date{{ $return->id }}"
+                                                                            class="form-control"
+                                                                            value="{{ now()->format('Y-m-d') }}" required>
+                                                                    </div>
+                                                                    <div class="modal-footer">
+                                                                        <button type="submit"
+                                                                            class="btn btn-danger">Scrap</button>
+                                                                        <button type="button" class="btn btn-secondary"
+                                                                            data-bs-dismiss="modal">Batal</button>
+                                                                    </div>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
                                                 @else
                                                     <span class="badge bg-success">Sudah Scrap</span>
                                                 @endif

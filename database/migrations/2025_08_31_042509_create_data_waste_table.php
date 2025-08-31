@@ -13,6 +13,8 @@ class CreateDataWasteTable extends Migration
             $table->unsignedBigInteger('id_resource')->nullable();
             $table->string('id_resource_column')->nullable();
             $table->string('status')->nullable();
+            $table->date('waste_date')->nullable();
+            $table->string('type_product')->nullable();
             $table->text('remark')->nullable();
             $table->timestamps();
         });

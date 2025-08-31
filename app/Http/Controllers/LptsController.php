@@ -315,17 +315,15 @@ class LptsController extends Controller
 
 public function scrap($id)
 {
-    // Ambil data LPTS
     $lpts = DB::table('lpts')->where('id', $id)->first();
     if (!$lpts) {
         return back()->with('error', 'Data LPTS tidak ditemukan!');
     }
 
-    // Ambil id_master_products dari work_orders
     $wo = DB::table('work_orders')->where('id', $lpts->id_wo)->first();
     $id_master_products = $wo ? $wo->id_master_products : null;
+    $type_product = $wo ? $wo->type_product : null; // Ambil type_product dari WO
 
-    // Ambil remark dari history_stock
     $remark = null;
     if ($id_master_products) {
         $history = DB::table('history_stocks')
@@ -335,17 +333,19 @@ public function scrap($id)
         $remark = $history ? $history->remarks : null;
     }
 
-    // Insert ke tabel data_waste
+    // Ambil tanggal scrap dari request, default ke hari ini jika tidak ada
+    $waste_date = request('waste_date') ?? now()->format('Y-m-d');
+
     DB::table('data_waste')->insert([
         'id_resource'         => $lpts->id,
         'id_resource_column'  => 'lpts_id',
         'status'              => 'qc',
         'remark'              => $remark,
+        'waste_date'          => $waste_date,
         'created_at'          => now(),
         'updated_at'          => now(),
     ]);
 
-    // Update qc_status di LPTS
     DB::table('lpts')->where('id', $id)->update([
         'qc_status' => 'scrap'
     ]);

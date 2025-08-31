@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -48,6 +49,7 @@ class DataWasteController extends Controller
             'dw.status',
             DB::raw("'LPTS' as sumber"),
             'dw.created_at',
+            'dw.waste_date'
         ])
         ->where('dw.id_resource_column', 'lpts_id');
 
@@ -63,6 +65,8 @@ class DataWasteController extends Controller
         ->leftJoin('master_product_fgs as mpf', 'so.id_master_products', '=', 'mpf.id')
         ->leftJoin('master_group_subs as mgs', 'mpf.id_master_group_subs', '=', 'mgs.id')
         ->leftJoin('master_units as mu', 'dnd.id_master_units', '=', 'mu.id')
+        ->leftJoin('work_orders as wo', 'rcp.id_sales_orders', '=', 'wo.id_sales_orders')
+        ->leftJoin('master_work_centers as mwc', 'wo.id_master_work_centers', '=', 'mwc.id')
         ->leftJoin(DB::raw('
             (SELECT hs1.*
              FROM history_stocks hs1
@@ -77,7 +81,7 @@ class DataWasteController extends Controller
             'so.so_number as no_so',
             'dn.dn_number as no_report',
             'dn.dn_number as no_dn',
-            DB::raw('NULL as work_center'),
+            'mwc.work_center as work_center',
             'dnd.qty as weight',
             'mu.unit as unit',
             'mgs.name as group_sub',
@@ -87,6 +91,7 @@ class DataWasteController extends Controller
             'dw.status',
             DB::raw("'RETURN' as sumber"),
             'dw.created_at',
+            'dw.waste_date'
         ])
         ->where('dw.id_resource_column', 'return_customers_ppic_id');
 
@@ -117,14 +122,14 @@ class DataWasteController extends Controller
     }
     // by Date Range
     if ($request->date_from && $request->date_to) {
-        $lptsQuery->whereBetween('dw.created_at', [$request->date_from, $request->date_to]);
-        $returnQuery->whereBetween('dw.created_at', [$request->date_from, $request->date_to]);
+        $lptsQuery->whereBetween('dw.waste_date', [$request->date_from, $request->date_to]);
+        $returnQuery->whereBetween('dw.waste_date', [$request->date_from, $request->date_to]);
     } elseif ($request->date_from) {
-        $lptsQuery->where('dw.created_at', '>=', $request->date_from);
-        $returnQuery->where('dw.created_at', '>=', $request->date_from);
+        $lptsQuery->where('dw.waste_date', '>=', $request->date_from);
+        $returnQuery->where('dw.waste_date', '>=', $request->date_from);
     } elseif ($request->date_to) {
-        $lptsQuery->where('dw.created_at', '<=', $request->date_to);
-        $returnQuery->where('dw.created_at', '<=', $request->date_to);
+        $lptsQuery->where('dw.waste_date', '<=', $request->date_to);
+        $returnQuery->where('dw.waste_date', '<=', $request->date_to);
     }
     // Searching by no_report
     if ($request->no_report) {
@@ -142,7 +147,129 @@ class DataWasteController extends Controller
         ->unionAll($returnQuery)
         ->orderByDesc('created_at')
         ->get();
+$typeProducts = DB::table('master_product_fgs')
+        ->select('type_product')
+        ->distinct()
+        ->pluck('type_product');
 
-    return view('data-waste.index', compact('datas'));
+    return view('data-waste.index', compact('datas', 'typeProducts'));
+}
+
+public function print(Request $request)
+{
+    // Query LPTS
+    $lptsQuery = DB::table('data_waste as dw')
+        ->leftJoin('lpts', function($join) {
+            $join->on('dw.id_resource', '=', 'lpts.id')
+                 ->where('dw.id_resource_column', '=', 'lpts_id');
+        })
+        ->leftJoin('work_orders as wo', 'lpts.id_wo', '=', 'wo.id')
+        ->leftJoin('sales_orders as so', 'wo.id_sales_orders', '=', 'so.id')
+        ->leftJoin('work_order_details as wod', 'wo.id', '=', 'wod.id_work_orders')
+        ->leftJoin('master_units as mu', 'wo.id_master_units', '=', 'mu.id')
+        ->leftJoin('master_product_fgs as mpf', 'wo.id_master_products', '=', 'mpf.id')
+        ->leftJoin('master_group_subs as mgs', 'mpf.id_master_group_subs', '=', 'mgs.id')
+        ->leftJoin('master_work_centers as mwc', 'wo.id_master_work_centers', '=', 'mwc.id')
+        ->leftJoin(DB::raw('
+            (SELECT hs1.*
+             FROM history_stocks hs1
+             INNER JOIN (
+                 SELECT id_master_products, MAX(id) AS max_id
+                 FROM history_stocks
+                 GROUP BY id_master_products
+             ) hs2 ON hs1.id_master_products = hs2.id_master_products AND hs1.id = hs2.max_id
+            ) as hs
+        '), 'wo.id_master_products', '=', 'hs.id_master_products')
+        ->leftJoin('delivery_notes as dn', 'so.id', '=', 'dn.id_sales_orders')
+        ->select([
+            'dw.waste_date as tanggal',
+            'mpf.type_product',
+            'mwc.work_center',
+            'wod.qty as weight',
+            'mu.unit',
+            'dw.status',
+            'hs.remarks as keterangan',
+            'dn.dn_number as report_number',
+            DB::raw("'LPTS' as sumber"),
+        ])
+        ->where('dw.id_resource_column', 'lpts_id');
+
+    // Query Return Customer
+    $returnQuery = DB::table('data_waste as dw')
+        ->leftJoin('return_customers_ppic as rcp', function($join) {
+            $join->on('dw.id_resource', '=', 'rcp.id')
+                 ->where('dw.id_resource_column', '=', 'return_customers_ppic_id');
+        })
+        ->leftJoin('delivery_note_details as dnd', 'rcp.id_delivery_note_details', '=', 'dnd.id')
+        ->leftJoin('delivery_notes as dn', 'dnd.id_delivery_notes', '=', 'dn.id')
+        ->leftJoin('sales_orders as so', 'dnd.id_sales_orders', '=', 'so.id')
+        ->leftJoin('master_product_fgs as mpf', 'so.id_master_products', '=', 'mpf.id')
+        ->leftJoin('master_group_subs as mgs', 'mpf.id_master_group_subs', '=', 'mgs.id')
+        ->leftJoin('master_units as mu', 'dnd.id_master_units', '=', 'mu.id')
+        ->leftJoin('work_orders as wo', 'rcp.id_sales_orders', '=', 'wo.id_sales_orders')
+        ->leftJoin('master_work_centers as mwc', 'wo.id_master_work_centers', '=', 'mwc.id')
+        ->leftJoin(DB::raw('
+            (SELECT hs1.*
+             FROM history_stocks hs1
+             INNER JOIN (
+                 SELECT id_master_products, MAX(id) AS max_id
+                 FROM history_stocks
+                 GROUP BY id_master_products
+             ) hs2 ON hs1.id_master_products = hs2.id_master_products AND hs1.id = hs2.max_id
+            ) as hs
+        '), 'mpf.id', '=', 'hs.id_master_products')
+        ->select([
+            'dw.waste_date as tanggal',
+            'mpf.type_product',
+            'mwc.work_center',
+            'dnd.qty as weight',
+            'mu.unit',
+            'dw.status',
+            'hs.remarks as keterangan',
+            'dn.dn_number as report_number',
+            DB::raw("'RETURN' as sumber"),
+        ])
+        ->where('dw.id_resource_column', 'return_customers_ppic_id');
+
+    // FILTERING
+    if ($request->type_product) {
+        $lptsQuery->where('mpf.type_product', $request->type_product);
+        $returnQuery->where('mpf.type_product', $request->type_product); // pastikan filter dari master_product_fgs
+    }
+    if ($request->date_from && $request->date_to) {
+        $lptsQuery->whereBetween('dw.waste_date', [$request->date_from, $request->date_to]);
+        $returnQuery->whereBetween('dw.waste_date', [$request->date_from, $request->date_to]);
+    } elseif ($request->date_from) {
+        $lptsQuery->where('dw.waste_date', '>=', $request->date_from);
+        $returnQuery->where('dw.waste_date', '>=', $request->date_from);
+    } elseif ($request->date_to) {
+        $lptsQuery->where('dw.waste_date', '<=', $request->date_to);
+        $returnQuery->where('dw.waste_date', '<=', $request->date_to);
+    }
+
+    // Gabung hasil
+    $datas = $lptsQuery
+        ->unionAll($returnQuery)
+        ->orderByDesc('tanggal')
+        ->get();
+
+    // Hitung total waste hanya untuk type yang dipilih
+    $selectedType = $request->type_product ?? null;
+    $totalWaste = 0;
+    foreach ($datas as $row) {
+        if ($selectedType) {
+            if ($row->type_product == $selectedType) {
+                $totalWaste += floatval($row->weight);
+            }
+        } else {
+            $totalWaste += floatval($row->weight);
+        }
+    }
+
+    return Pdf::loadView('data-waste.print', [
+        'datas' => $datas,
+        'selectedType' => $selectedType,
+        'totalWaste' => $totalWaste
+    ])->setPaper('legal', 'landscape')->stream('stock_card_waste.pdf');
 }
 }

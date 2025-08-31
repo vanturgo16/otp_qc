@@ -209,24 +209,21 @@ public function exportExcel(Request $request)
 
 public function scrap($id)
 {
-    // Ambil data return_customers_ppic
     $return = DB::table('return_customers_ppic')->where('id', $id)->first();
     if (!$return) {
         return back()->with('error', 'Data Return Customer tidak ditemukan!');
     }
 
-    // Ambil data delivery_note_details
     $delivery_detail = DB::table('delivery_note_details')->where('id', $return->id_delivery_note_details)->first();
     $id_sales_orders = $delivery_detail ? $delivery_detail->id_sales_orders : null;
+    $type_product = $delivery_detail ? $delivery_detail->type_product : null;
 
-    // Ambil id_master_products dari sales_orders
     $id_master_products = null;
     if ($id_sales_orders) {
         $sales_order = DB::table('sales_orders')->where('id', $id_sales_orders)->first();
         $id_master_products = $sales_order ? $sales_order->id_master_products : null;
     }
 
-    // Ambil remark dari history_stock
     $remark = null;
     if ($id_master_products) {
         $history = DB::table('history_stocks')
@@ -236,17 +233,18 @@ public function scrap($id)
         $remark = $history ? $history->remarks : null;
     }
 
-    // Insert ke tabel data_waste
+    $waste_date = request('waste_date') ?? now()->format('Y-m-d');
+
     DB::table('data_waste')->insert([
         'id_resource'         => $return->id,
         'id_resource_column'  => 'return_customers_ppic_id',
         'status'              => 'return',
         'remark'              => $remark,
+        'waste_date'          => $waste_date,
         'created_at'          => now(),
         'updated_at'          => now(),
     ]);
 
-    // Update qc_status di return_customers_ppic
     DB::table('return_customers_ppic')->where('id', $id)->update([
         'qc_status' => 'scrap'
     ]);

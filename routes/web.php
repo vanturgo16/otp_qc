@@ -75,6 +75,7 @@ Route::middleware(['auth', 'clear.permission.cache', 'permission:PPIC'])->group(
     Route::controller(DataWasteController::class)->group(function () {
         Route::prefix('data-waste')->group(function () {
             Route::get('/', 'index')->name('data-waste.index');
+            Route::get('/print', [DataWasteController::class, 'print'])->name('data-waste.print');
            
         });
     });

@@ -237,14 +237,51 @@
                                                 {{-- Tombol Scrap hanya muncul jika $data->id ADA --}}
                                                 @if (!empty($data->id))
                                                     @if ($data->qc_status !== 'scrap')
-                                                        <form action="{{ route('lpts.scrap', $data->id) }}"
-                                                            method="POST" style="display:inline;">
-                                                            @csrf
-                                                            <button type="submit" class="btn btn-danger btn-sm"
-                                                                onclick="return confirm('Yakin Scrap data ini?')">
-                                                                Scrap
-                                                            </button>
-                                                        </form>
+                                                        <!-- Tombol Scrap buka modal -->
+                                                        <button type="button" class="btn btn-danger btn-sm"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#modalScrap{{ $data->id }}">
+                                                            Scrap
+                                                        </button>
+                                                        <!-- Modal Scrap -->
+                                                        <div class="modal fade" id="modalScrap{{ $data->id }}"
+                                                            tabindex="-1"
+                                                            aria-labelledby="modalScrapLabel{{ $data->id }}"
+                                                            aria-hidden="true">
+                                                            <div class="modal-dialog">
+                                                                <form action="{{ route('lpts.scrap', $data->id) }}"
+                                                                    method="POST">
+                                                                    @csrf
+                                                                    <div class="modal-content">
+                                                                        <div class="modal-header">
+                                                                            <h5 class="modal-title"
+                                                                                id="modalScrapLabel{{ $data->id }}">
+                                                                                Scrap Data LPTS
+                                                                            </h5>
+                                                                            <button type="button" class="btn-close"
+                                                                                data-bs-dismiss="modal"></button>
+                                                                        </div>
+                                                                        <div class="modal-body">
+                                                                            <label
+                                                                                for="waste_date{{ $data->id }}">Tanggal
+                                                                                Scrap</label>
+                                                                            <input type="date" name="waste_date"
+                                                                                id="waste_date{{ $data->id }}"
+                                                                                class="form-control"
+                                                                                value="{{ now()->format('Y-m-d') }}"
+                                                                                required>
+                                                                        </div>
+                                                                        <div class="modal-footer">
+                                                                            <button type="submit"
+                                                                                class="btn btn-danger">Scrap</button>
+                                                                            <button type="button"
+                                                                                class="btn btn-secondary"
+                                                                                data-bs-dismiss="modal">Batal</button>
+                                                                        </div>
+                                                                    </div>
+                                                                </form>
+                                                            </div>
+                                                        </div>
                                                     @else
                                                         <span class="badge bg-success">Sudah Scrap</span>
                                                     @endif

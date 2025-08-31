@@ -58,6 +58,8 @@
                                             </button>
                                             <a href="#" id="exportExcelBtn" class="btn btn-success">Export
                                                 Excel</a>
+                                            <a href="#" id="printWasteBtn" class="btn btn-success">Print Stock Card
+                                                Waste</a>
                                         </div>
                                     </div>
                                     <!-- Tombol kanan sendiri (Add Data) -->
@@ -125,8 +127,9 @@
                                                     <div class="mb-3">
                                                         <label for="filter_work_center" class="form-label">Work
                                                             Center</label>
-                                                        <input type="text" class="form-control" id="filter_work_center"
-                                                            name="work_center" placeholder="Work Center..."
+                                                        <input type="text" class="form-control"
+                                                            id="filter_work_center" name="work_center"
+                                                            placeholder="Work Center..."
                                                             value="{{ request('work_center') }}">
                                                     </div>
                                                     <div class="mb-3">
@@ -195,7 +198,7 @@
                                 <tbody>
                                     @foreach ($datas as $data)
                                         <tr>
-                                            <td>{{ $data->created_at_formatted ?? '-' }}</td>
+                                            <td>{{ $data->waste_date ?? '-' }}</td>
                                             <td>{{ $data->no_report ?? '-' }}</td>
                                             <td>{{ $data->no_so ?? '-' }}</td>
                                             <td>{{ $data->work_center ?? '-' }}</td>
@@ -223,6 +226,51 @@
         </div>
     </div>
     </div>
+
+    <!-- Modal Filter Print -->
+    <div class="modal fade" id="modalPrintWaste" tabindex="-1" aria-labelledby="modalPrintWasteLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <form id="formPrintWaste" method="GET" action="{{ route('data-waste.print') }}" target="_blank">
+                <div class="modal-content">
+                    <div class="modal-header bg-success text-white">
+                        <h5 class="modal-title" id="modalPrintWasteLabel">
+                            <i class="mdi mdi-printer"></i> Print Filter Stock Card Waste
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="print_type_product" class="form-label">Type Product</label>
+                            <select class="form-control" id="print_type_product" name="type_product">
+                                <option value="">-- All Type Product --</option>
+                                @foreach ($typeProducts as $tp)
+                                    <option value="{{ $tp }}">{{ $tp }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Waste Date</label>
+                            <div class="row g-2">
+                                <div class="col-md-6">
+                                    <label for="print_date_from" class="form-label">Dari Tanggal</label>
+                                    <input type="date" class="form-control" id="print_date_from" name="date_from">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="print_date_to" class="form-label">Sampai Tanggal</label>
+                                    <input type="date" class="form-control" id="print_date_to" name="date_to">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-success">Print</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 @endsection
 
 @push('scripts')
@@ -233,6 +281,10 @@
     <script>
         $(document).ready(function() {
             $('#data-wasteTable').DataTable({});
+            $('#printWasteBtn').on('click', function(e) {
+                e.preventDefault();
+                $('#modalPrintWaste').modal('show');
+            });
         });
     </script>
 @endpush
