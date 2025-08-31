@@ -1,23 +1,25 @@
 // ...existing use statements...
 <?php
 
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DataSampleController;
+use App\Http\Controllers\DataWasteController;
 use App\Http\Controllers\GrnController;
 use App\Http\Controllers\LptsController;
+use App\Http\Controllers\ProductionController;
 use App\Http\Controllers\qc\CoaController;
 use App\Http\Controllers\qc\HistorystokController;
+use App\Http\Controllers\ReturnCustomerPPIC;
 use App\Http\Controllers\user\PermissionController;
 use App\Http\Controllers\user\RoleController;
 use App\Http\Controllers\user\UserController;
-use App\Http\Controllers\warehouse\WarehouseController;
-use App\Http\Controllers\warehouse\DeliveryNoteController;
 
 //PRODUCTION
-use App\Http\Controllers\ProductionController;
-use App\Http\Controllers\ReturnCustomerPPIC;
+use App\Http\Controllers\warehouse\DeliveryNoteController;
+use App\Http\Controllers\warehouse\WarehouseController;
+use Illuminate\Support\Facades\Route;
+
 
 //Route Login
 Route::get('/', [AuthController::class, 'login'])->name('login');
@@ -57,6 +59,7 @@ Route::middleware(['auth', 'clear.permission.cache', 'permission:PPIC'])->group(
             Route::post('/keterangan', [LptsController::class, 'storeKeterangan'])->name('lpts.keterangan');
             Route::get('/print/{work_order_id}', [LptsController::class, 'printLpts'])->name('lpts.print');
             Route::get('/export-excel', [LptsController::class, 'exportExcel'])->name('lpts.exportExcel');
+            Route::post('/{id}/scrap', [LptsController::class, 'scrap'])->name('lpts.scrap');
         });
     });
 
@@ -64,8 +67,15 @@ Route::middleware(['auth', 'clear.permission.cache', 'permission:PPIC'])->group(
         Route::prefix('return-customer-ppic')->group(function () {
             Route::get('/', 'index')->name('return-customer-ppic.index');
             Route::post('/store', [ReturnCustomerPPIC::class, 'store'])->name('return-customer-ppic.store');
-            Route::get('/return-customer-ppic/print/{id_delivery_note_details}', [ReturnCustomerPPIC::class, 'printReturn'])->name('return-customer-ppic.print');
+            Route::get('/print/{id_delivery_note_details}', [ReturnCustomerPPIC::class, 'printReturn'])->name('return-customer-ppic.print');
+            Route::post('/{id}/scrap', [ReturnCustomerPPIC::class, 'scrap'])->name('return-customer-ppic.scrap');
             Route::get('/export-excel', [ReturnCustomerPPIC::class, 'exportExcel'])->name('return-customer-ppic.exportExcel');
+        });
+    });
+    Route::controller(DataWasteController::class)->group(function () {
+        Route::prefix('data-waste')->group(function () {
+            Route::get('/', 'index')->name('data-waste.index');
+           
         });
     });
 

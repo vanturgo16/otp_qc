@@ -173,19 +173,23 @@ class LptsController extends Controller
        $bulanRomawi = $this->toRoman(now()->format('n'));
         $tahun = now()->format('y');
         $urut = 1; // urutan hanya untuk WO yang belum punya LPTS
-        foreach ($datas as $row) {
-            $lpts = DB::table('lpts')->where('id_wo', $row->work_order_id)->first();
-            if ($lpts) {
-                $row->no_lpts = $lpts->no_lpts;
-                $row->keterangan = $lpts->keterangan;
-                $row->can_print = !empty($lpts->keterangan);
-            } else {
-                $row->no_lpts = "Belum Ada";
-                $row->keterangan = null;
-                $row->can_print = false;
-            }
-            $row->created_at_formatted = $this->formatTanggal($row->created_at);
-        }
+   foreach ($datas as $row) {
+    $lpts = DB::table('lpts')->where('id_wo', $row->work_order_id)->first();
+    if ($lpts) {
+        $row->id = $lpts->id; 
+        $row->no_lpts = $lpts->no_lpts;
+        $row->keterangan = $lpts->keterangan;
+        $row->can_print = !empty($lpts->keterangan);
+        $row->qc_status = $lpts->qc_status;
+    } else {
+        $row->id = null; 
+        $row->no_lpts = "Belum Ada";
+        $row->keterangan = null;
+        $row->can_print = false;
+        $row->qc_status = null;
+    }
+    $row->created_at_formatted = $this->formatTanggal($row->created_at);
+}
         // Filtering after generate
         $datas = collect($datas);
         if ($request->filled('no_lpts')) {
@@ -201,50 +205,63 @@ class LptsController extends Controller
         return view('lpts.index', compact('datas'));
     }
 
-    public function storeKeterangan(Request $request)
-    {
-        $request->validate([
-            'no_lpts'    => 'required|string',
-            'id_wo'      => 'required|integer',
-            'keterangan' => 'nullable|string|max:1000',
-        ]);
-
-        // Ambil no_wo dari tabel work_orders
-        $wo = DB::table('work_orders')->where('id', $request->id_wo)->first();
-        $no_wo = $wo ? $wo->wo_number : null;
-
-        // Ambil barcode_number gabungan jadi jika ada id_work_orders yang sama maka akan di gabung barcode_number nya
-        $barcode_numbers = DB::table('barcodes')
-            ->leftJoin('barcode_detail', 'barcodes.id', '=', 'barcode_detail.id_barcode')
-            ->where('barcodes.id_work_orders', $request->id_wo)
-            ->pluck('barcode_detail.barcode_number')
-            ->toArray();
-
-        $barcode_number_str = implode(',', $barcode_numbers);
-
-        // Insert/update lpts
-        $existing = DB::table('lpts')->where('id_wo', $request->id_wo)->first();
-      if (!$existing) {
-    // Generate nomor LPTS baru, global
-    $bulanRomawi = $this->toRoman(now()->format('n'));
-    $tahun = now()->format('y');
-    $noUrut = str_pad($this->getUrutanLPTSBaru(), 3, '0', STR_PAD_LEFT);
-    $no_lpts = "{$noUrut}/Q&D/LPTS/{$bulanRomawi}/{$tahun}";
-
-    DB::table('lpts')->insert([
-        'no_lpts'        => $no_lpts,
-        'id_wo'          => $request->id_wo,
-        'no_wo'          => $no_wo,
-        'barcode_number' => $barcode_number_str,
-        'keterangan'     => $request->keterangan,
-        'created_by'     => auth()->user()->id,
-        'created_at'     => now(),
-        'updated_at'     => now(),
+   public function storeKeterangan(Request $request)
+{
+    $request->validate([
+        'no_lpts'    => 'required|string',
+        'id_wo'      => 'required|integer',
+        'keterangan' => 'nullable|string|max:1000',
     ]);
-}
-        return back()->with('pesan', 'Keterangan berhasil disimpan!');
-    }
 
+    // Ambil WO
+    $wo = DB::table('work_orders')->where('id', $request->id_wo)->first();
+    $no_wo = $wo ? $wo->wo_number : null;
+
+    // Ambil id_master_products dari WO
+    $id_master_products = $wo->id_master_products ?? null;
+
+    // Cari id_history_stock yang sesuai dengan id_master_products
+    $history_stock = DB::table('history_stocks')
+        ->where('id_master_products', $id_master_products)
+        ->orderByDesc('id') // ambil yang paling baru, jika ada lebih dari satu
+        ->first();
+
+    $id_history_stock = $history_stock ? $history_stock->id : null;
+
+    // Gabung barcode_number
+    $barcode_numbers = DB::table('barcodes')
+        ->leftJoin('barcode_detail', 'barcodes.id', '=', 'barcode_detail.id_barcode')
+        ->where('barcodes.id_work_orders', $request->id_wo)
+        ->pluck('barcode_detail.barcode_number')
+        ->toArray();
+    $barcode_number_str = implode(',', $barcode_numbers);
+
+    // Insert/update lpts
+    $existing = DB::table('lpts')->where('id_wo', $request->id_wo)->first();
+    if (!$existing) {
+        $bulanRomawi = $this->toRoman(now()->format('n'));
+        $tahun = now()->format('y');
+        $noUrut = str_pad($this->getUrutanLPTSBaru(), 3, '0', STR_PAD_LEFT);
+        $no_lpts = "{$noUrut}/Q&D/LPTS/{$bulanRomawi}/{$tahun}";
+
+        DB::table('lpts')->insert([
+            'no_lpts'        => $no_lpts,
+            'id_wo'          => $request->id_wo,
+            'id_history_stock' => $id_history_stock, // <-- isi dari hasil di atas
+            'no_wo'          => $no_wo,
+            'barcode_number' => $barcode_number_str,
+            'keterangan'     => $request->keterangan,
+            'qc_status'      => 'checked',
+            'created_by'     => auth()->user()->id,
+            'created_at'     => now(),
+            'updated_at'     => now(),
+        ]);
+    }
+    return back()->with('pesan', 'Keterangan berhasil disimpan!');
+}
+
+ 
+    
     public function printLpts($work_order_id)
     {
         // Ambil dari lpts
@@ -274,6 +291,7 @@ class LptsController extends Controller
                 'wo.id_sales_orders',
                 'wo.type_product',
                 'wo.qty',
+                'wo.qty_needed',
                 'wo.created_at',
                 'wo.status',
                 'pl.packing_number',
@@ -295,7 +313,45 @@ class LptsController extends Controller
         return $pdf->stream('LPTS.pdf');
     }
 
+public function scrap($id)
+{
+    // Ambil data LPTS
+    $lpts = DB::table('lpts')->where('id', $id)->first();
+    if (!$lpts) {
+        return back()->with('error', 'Data LPTS tidak ditemukan!');
+    }
 
+    // Ambil id_master_products dari work_orders
+    $wo = DB::table('work_orders')->where('id', $lpts->id_wo)->first();
+    $id_master_products = $wo ? $wo->id_master_products : null;
+
+    // Ambil remark dari history_stock
+    $remark = null;
+    if ($id_master_products) {
+        $history = DB::table('history_stocks')
+            ->where('id_master_products', $id_master_products)
+            ->orderByDesc('id')
+            ->first();
+        $remark = $history ? $history->remarks : null;
+    }
+
+    // Insert ke tabel data_waste
+    DB::table('data_waste')->insert([
+        'id_resource'         => $lpts->id,
+        'id_resource_column'  => 'lpts_id',
+        'status'              => 'qc',
+        'remark'              => $remark,
+        'created_at'          => now(),
+        'updated_at'          => now(),
+    ]);
+
+    // Update qc_status di LPTS
+    DB::table('lpts')->where('id', $id)->update([
+        'qc_status' => 'scrap'
+    ]);
+
+    return back()->with('success', 'Data LPTS berhasil di scrap ke Waste dan QC status diupdate!');
+}
     private function getUrutanLPTSBaru() {
     // Ambil urutan terbesar dari DB
     $lastNo = DB::table('lpts')

@@ -234,7 +234,21 @@
                                                     </a>
                                                 @endif
 
-                                                <a href="" class="btn btn-sm btn-warning">Edit</a>
+                                                {{-- Tombol Scrap hanya muncul jika $data->id ADA --}}
+                                                @if (!empty($data->id))
+                                                    @if ($data->qc_status !== 'scrap')
+                                                        <form action="{{ route('lpts.scrap', $data->id) }}"
+                                                            method="POST" style="display:inline;">
+                                                            @csrf
+                                                            <button type="submit" class="btn btn-danger btn-sm"
+                                                                onclick="return confirm('Yakin Scrap data ini?')">
+                                                                Scrap
+                                                            </button>
+                                                        </form>
+                                                    @else
+                                                        <span class="badge bg-success">Sudah Scrap</span>
+                                                    @endif
+                                                @endif
                                             </td>
                                         </tr>
                                     @endforeach

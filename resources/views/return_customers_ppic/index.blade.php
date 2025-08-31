@@ -24,7 +24,7 @@
                         <div class="page-title-right">
                             <ol class="breadcrumb m-0">
                                 <li class="breadcrumb-item"><a href="{{ url('/dashboard') }}">QC</a></li>
-                                <li class="breadcrumb-item active" aria-current="page">Data Sample</li>
+                                <li class="breadcrumb-item active" aria-current="page">Return Customer PPIC</li>
                             </ol>
                         </div>
                     </div>
@@ -353,9 +353,22 @@
                                             <td>{{ $return->weight }}</td>
                                             <td>{{ $return->keterangan }}</td>
 
-                                            <td><a href="{{ route('return-customer-ppic.print', $return->id_delivery_note_details) }}"
+                                            <td>
+                                                <a href="{{ route('return-customer-ppic.print', $return->id_delivery_note_details) }}"
                                                     class="btn btn-primary" target="_blank">Print PDF</a>
-                                                <a class="btn btn-info " target="_blank">Scrap</a>
+
+                                                @if ($return->qc_status !== 'scrap')
+                                                    <form action="{{ route('return-customer-ppic.scrap', $return->id) }}"
+                                                        method="POST" style="display:inline;">
+                                                        @csrf
+                                                        <button type="submit" class="btn btn-danger"
+                                                            onclick="return confirm('Yakin scrap data ini? Data akan masuk ke tabel Waste dan status QC jadi Scrap!')">
+                                                            Scrap
+                                                        </button>
+                                                    </form>
+                                                @else
+                                                    <span class="badge bg-success">Sudah Scrap</span>
+                                                @endif
                                             </td>
                                         </tr>
                                     @endforeach

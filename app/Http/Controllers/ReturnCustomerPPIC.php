@@ -16,7 +16,7 @@ class ReturnCustomerPPIC extends Controller
 public function index( Request $request)
 {
     $dn_details = DB::table('delivery_note_details as dn_details')
-        ->leftJoin('delivery_notes as dn', 'dn_details.id', '=', 'dn.id')
+        ->leftJoin('delivery_notes as dn', 'dn_details.id_delivery_notes', '=', 'dn.id')
         ->leftJoin('master_customers as mc', 'dn.id_master_customers', '=', 'mc.id')
         ->leftJoin('sales_orders as so', 'dn_details.id_sales_orders', '=', 'so.id')
         ->leftJoin('master_product_fgs as mpf', 'so.id_master_products', '=', 'mpf.id')
@@ -120,6 +120,7 @@ ReturnCustomersPpic::create([
     'date_return' => $request->tanggal,
     'weight' => $request->berat,
     'keterangan' => $request->keterangan,
+    'qc_status' => 'checked',
     'created_at' => now(),
     'updated_at' => now(),
 ]);
@@ -205,4 +206,52 @@ public function exportExcel(Request $request)
 
     return Excel::download(new ReturnCustomerPpicExport($returns), 'return_customer_ppic.xlsx');
 }
+
+public function scrap($id)
+{
+    // Ambil data return_customers_ppic
+    $return = DB::table('return_customers_ppic')->where('id', $id)->first();
+    if (!$return) {
+        return back()->with('error', 'Data Return Customer tidak ditemukan!');
+    }
+
+    // Ambil data delivery_note_details
+    $delivery_detail = DB::table('delivery_note_details')->where('id', $return->id_delivery_note_details)->first();
+    $id_sales_orders = $delivery_detail ? $delivery_detail->id_sales_orders : null;
+
+    // Ambil id_master_products dari sales_orders
+    $id_master_products = null;
+    if ($id_sales_orders) {
+        $sales_order = DB::table('sales_orders')->where('id', $id_sales_orders)->first();
+        $id_master_products = $sales_order ? $sales_order->id_master_products : null;
+    }
+
+    // Ambil remark dari history_stock
+    $remark = null;
+    if ($id_master_products) {
+        $history = DB::table('history_stocks')
+            ->where('id_master_products', $id_master_products)
+            ->orderByDesc('id')
+            ->first();
+        $remark = $history ? $history->remarks : null;
+    }
+
+    // Insert ke tabel data_waste
+    DB::table('data_waste')->insert([
+        'id_resource'         => $return->id,
+        'id_resource_column'  => 'return_customers_ppic_id',
+        'status'              => 'return',
+        'remark'              => $remark,
+        'created_at'          => now(),
+        'updated_at'          => now(),
+    ]);
+
+    // Update qc_status di return_customers_ppic
+    DB::table('return_customers_ppic')->where('id', $id)->update([
+        'qc_status' => 'scrap'
+    ]);
+
+    return back()->with('success', 'Data Return Customer berhasil di scrap ke Waste dan QC status diupdate!');
 }
+}
+

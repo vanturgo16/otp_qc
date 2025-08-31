@@ -189,6 +189,8 @@
                                         <li><a href="{{ url('lpts/') }}" data-key="t-blog-grid">Data LPTS</a></li>
                                         <li><a href="{{ url('return-customer-ppic/') }}" data-key="t-blog-grid">Return
                                                 Customer PPIC</a></li>
+                                        <li><a href="{{ url('data-waste/') }}" data-key="t-blog-grid">Return
+                                                Data Waste</a></li>
                                     @endcan
 
                                     @can('PPIC_good-receipt-note')
@@ -532,7 +534,7 @@
                 icon: 'error',
                 title: 'Oops...',
                 text: '{{ session('
-                                                            sweet_error ') }}',
+                                                                                            sweet_error ') }}',
                 timer: 3000,
                 showConfirmButton: false
             });
