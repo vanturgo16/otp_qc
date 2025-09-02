@@ -56,9 +56,9 @@
                                                 data-bs-target="#filterModalDataWaste">
                                                 <i class="mdi mdi-filter-variant"></i> Filter
                                             </button>
-                                            <a href="#" id="exportExcelBtn" class="btn btn-success">Export
-                                                Excel</a>
-                                            <a href="#" id="printWasteBtn" class="btn btn-success">Print Stock Card
+                                            <a href="{{ route('data-waste.exportExcel') }}" id="exportExcelBtn"
+                                                class="btn btn-success">Export Excel</a>
+                                            <a href="#" id="printWasteBtn" class="btn btn-warning">Print Stock Card
                                                 Waste</a>
                                         </div>
                                     </div>
@@ -74,23 +74,23 @@
                                 @push('scripts')
                                     <script>
                                         $(document).ready(function() {
+                                            // Export Excel Data Waste sesuai filter
                                             $('#exportExcelBtn').on('click', function(e) {
                                                 e.preventDefault();
                                                 // Ambil semua parameter filter dari form utama dan modal
                                                 var params = {};
-                                                // dari form utama
-                                                params.no_dn = $('#no_dn').val();
-                                                params.product_name = $('#product_name').val();
-                                                // dari modal
-                                                params.dn_number = $('#filter_dn_number').val();
-                                                params.customer_name = $('#filter_customer_name').val();
-                                                params.no_po = $('#filter_no_po').val();
-                                                params.so_number = $('#filter_so_number').val();
+                                                params.no_report = $('#no_report').val();
+                                                params.no_so = $('#no_so').val();
+                                                params.type_product = $('#filter_type_product').val();
+                                                params.group_sub = $('#filter_group_sub').val();
+                                                params.work_center = $('#filter_work_center').val();
+                                                params.type_stock = $('#filter_type_stock').val();
+                                                params.status = $('#filter_status').val();
                                                 params.date_from = $('#date_from').val();
                                                 params.date_to = $('#date_to').val();
                                                 // Build query string
                                                 var query = $.param(params);
-                                                var url = "{{ route('return-customer-ppic.exportExcel') }}?" + query;
+                                                var url = "{{ route('data-waste.exportExcel') }}?" + query;
                                                 window.location.href = url;
                                             });
                                         });
@@ -241,13 +241,17 @@
                     </div>
                     <div class="modal-body">
                         <div class="mb-3">
-                            <label for="print_type_product" class="form-label">Type Product</label>
-                            <select class="form-control" id="print_type_product" name="type_product">
-                                <option value="">-- All Type Product --</option>
+                            <label class="form-label">Type Product</label>
+                            <div>
                                 @foreach ($typeProducts as $tp)
-                                    <option value="{{ $tp }}">{{ $tp }}</option>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" name="type_product[]"
+                                            id="tp_{{ $tp }}" value="{{ $tp }}">
+                                        <label class="form-check-label"
+                                            for="tp_{{ $tp }}">{{ $tp }}</label>
+                                    </div>
                                 @endforeach
-                            </select>
+                            </div>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Waste Date</label>
@@ -284,6 +288,16 @@
             $('#printWasteBtn').on('click', function(e) {
                 e.preventDefault();
                 $('#modalPrintWaste').modal('show');
+            });
+
+            // Validasi minimal 1 type product harus dipilih
+            $('#formPrintWaste').on('submit', function(e) {
+                var checked = $('input[name="type_product[]"]:checked').length;
+                if (checked < 1) {
+                    alert('Pilih minimal 1 Type Product untuk print!');
+                    e.preventDefault();
+                    return false;
+                }
             });
         });
     </script>

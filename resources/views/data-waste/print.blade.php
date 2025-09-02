@@ -52,128 +52,146 @@
             </td>
         </tr>
     </table>
+    @php
+        $typeProductsSelected = $typeProductsSelected ?? [];
+        $typeProducts = count($typeProductsSelected)
+            ? $typeProductsSelected
+            : collect($datas)
+                ->pluck('type_product')
+                ->filter(fn($val) => !empty($val))
+                ->unique()
+                ->sort()
+                ->values()
+                ->toArray();
+
+        // Inisialisasi saldo, running weight, running unit per type
+        $saldo = [];
+        $runningWeight = [];
+        $runningUnit = [];
+        foreach ($typeProducts as $tp) {
+            $saldo[$tp] = 0;
+            $runningWeight[$tp] = 0;
+            $runningUnit[$tp] = '';
+        }
+        // Hitung jumlah kolom tetap sebelum saldo
+        $fixedColspan = 3 + 4 + 5; // Tanggal, Type Product, Work Center + IN(4) + OUT(5)
+    @endphp
     <table style="margin-top:8px; width:100%;">
         <tr style="font-weight:bold; text-align:center;">
-            <th rowspan="2">TANGGAL</th>
-            <th rowspan="2">Type product</th>
-            <th rowspan="2">work Center</th>
-            <th colspan="5">IN</th>
-            <th colspan="4">OUT</th>
-            @if ($selectedType == 'POF' || !$selectedType)
-                <th colspan="2">SALDO POF</th>
-            @endif
-            @if ($selectedType == 'PP' || !$selectedType)
-                <th colspan="2">SALDO PP</th>
-            @endif
-            @if ($selectedType == 'Crosslink' || !$selectedType)
-                <th colspan="2">SALDO Crosslink</th>
-            @endif
+            <th rowspan="3">TANGGAL</th>
+            <th rowspan="3">Type Product</th>
+            <th rowspan="3">Work Center</th>
+            <th colspan="4">IN</th>
+            <th colspan="5">OUT</th>
+            <th colspan="{{ count($typeProducts) * 2 }}">SALDO</th>
         </tr>
         <tr style="font-weight:bold; text-align:center;">
+            {{-- IN --}}
             <th>Weight</th>
             <th>Unit</th>
             <th>Status</th>
             <th>Keterangan</th>
-            <th></th>
+            {{-- OUT  --}}
             <th>Report Number</th>
             <th>Weight</th>
             <th>Unit</th>
             <th>Status</th>
             <th>Keterangan</th>
-            @if ($selectedType == 'POF' || !$selectedType)
-                <th>Weight</th>
-                <th>Unit</th>
-            @endif
-            @if ($selectedType == 'PP' || !$selectedType)
-                <th>Weight</th>
-                <th>Unit</th>
-            @endif
-            @if ($selectedType == 'Crosslink' || !$selectedType)
-                <th>Weight</th>
-                <th>Unit</th>
-            @endif
+            @foreach ($typeProducts as $tp)
+                <th colspan="2"> {{ $tp }}</th>
+            @endforeach
         </tr>
-        @php
-            $saldo = ['POF' => 0, 'PP' => 0, 'Crosslink' => 0];
-        @endphp
+
+        <tr>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+
+
+
+            @foreach ($typeProducts as $tp)
+                <th> weight</th>
+                <th>unit</th>
+            @endforeach
+
+
+        </tr>
         @foreach ($datas as $row)
             @php
-                // Langsung ambil dari data
-                $in_weight = $row->weight;
-                $in_unit = $row->unit;
-                $in_status = $row->status;
-                $in_keterangan = $row->keterangan ?? ($row->remark ?? '');
-                $out_report = $row->report_number ?? ($row->no_report ?? '');
-                $tanggal = $row->tanggal ?? ($row->waste_date ?? $row->created_at);
+                $type_product = $row->type_product ?? '-';
+                $unit = $row->unit ?? '';
+                $weight = floatval($row->weight ?? 0);
 
-                // Saldo
-                if ($row->type_product == 'POF') {
-                    $saldo['POF'] += floatval($in_weight);
-                }
-                if ($row->type_product == 'PP') {
-                    $saldo['PP'] += floatval($in_weight);
-                }
-                if ($row->type_product == 'Crosslink') {
-                    $saldo['Crosslink'] += floatval($in_weight);
+                // Kalkulasi saldo dan running weight/unit per type
+                foreach ($typeProducts as $tp) {
+                    if ($type_product == $tp) {
+                        if (strtoupper($row->type_stock) == 'IN') {
+                            $saldo[$tp] += $weight;
+                        } elseif (strtoupper($row->type_stock) == 'OUT') {
+                            $saldo[$tp] -= $weight;
+                        }
+                        // Running weight pada baris ini
+                        $runningWeight[$tp] = $weight;
+                        // Isi unit jika ada
+                        if (!empty($unit)) {
+                            $runningUnit[$tp] = $unit;
+                        }
+                    }
                 }
             @endphp
             <tr>
-                <td class="center">{{ \Carbon\Carbon::parse($tanggal)->format('m/d/Y') }}</td>
-                <td class="center">{{ $row->type_product }}</td>
-                <td class="center">{{ $row->work_center }}</td>
-                <td class="right">{{ $in_weight }}</td>
-                <td class="center">{{ $in_unit }}</td>
-                <td class="center">{{ $in_status }}</td>
-                <td class="center">{{ $in_keterangan }}</td>
-                <td class="center">{{ $out_report }}</td>
-                @if ($selectedType == 'POF' || !$selectedType)
-                    <td class="right">{{ $row->type_product == 'POF' ? number_format($saldo['POF'], 2) : '' }}</td>
-                    <td class="center">{{ $row->type_product == 'POF' ? 'Kg' : '' }}</td>
-                @endif
-                @if ($selectedType == 'PP' || !$selectedType)
-                    <td class="right">{{ $row->type_product == 'PP' ? number_format($saldo['PP'], 2) : '' }}</td>
-                    <td class="center">{{ $row->type_product == 'PP' ? 'Kg' : '' }}</td>
-                @endif
-                @if ($selectedType == 'Crosslink' || !$selectedType)
-                    <td class="right">
-                        {{ $row->type_product == 'Crosslink' ? number_format($saldo['Crosslink'], 2) : '' }}</td>
-                    <td class="center">{{ $row->type_product == 'Crosslink' ? 'Kg' : '' }}</td>
-                @endif
+                <td class="center">{{ $row->tanggal ? \Carbon\Carbon::parse($row->tanggal)->format('m/d/Y') : '-' }}
+                </td>
+                <td class="center">{{ $type_product }}</td>
+                <td class="center">{{ $row->work_center ?? '-' }}</td>
+                {{-- IN --}}
+                <td class="right">{{ strtoupper($row->type_stock) == 'IN' ? number_format($weight, 2) : '' }}</td>
+                <td class="center">{{ strtoupper($row->type_stock) == 'IN' ? $unit : '' }}</td>
+                <td class="center">{{ strtoupper($row->type_stock) == 'IN' ? $row->status : '' }}</td>
+                <td class="center" style="border-right: none;">
+                    {{ strtoupper($row->type_stock) == 'IN' ? $row->keterangan ?? ($row->remark ?? '') : '' }}</td>
+                {{-- OUT --}}
+                <td class="center">
+                    {{ strtoupper($row->type_stock) == 'OUT' ? $row->report_number ?? ($row->no_report ?? '') : '' }}
+                </td>
+                <td class="right">{{ strtoupper($row->type_stock) == 'OUT' ? number_format($weight, 2) : '' }}</td>
+                <td class="center">{{ strtoupper($row->type_stock) == 'OUT' ? $unit : '' }}</td>
+                <td class="center">{{ strtoupper($row->type_stock) == 'OUT' ? $row->status : '' }}</td>
+                <td class="center">
+                    {{ strtoupper($row->type_stock) == 'OUT' ? $row->keterangan ?? ($row->remark ?? '') : '' }}</td>
+                {{-- SALDO --}}
+                @foreach ($typeProducts as $tp)
+                    @if ($type_product == $tp)
+                        <td class="right">{{ number_format($saldo[$tp], 2) }}</td>
+                        <td class="center">{{ $runningUnit[$tp] }}</td>
+                    @else
+                        <td></td>
+                        <td></td>
+                    @endif
+                @endforeach
             </tr>
         @endforeach
-        <!-- Baris kosong jika data kurang dari 4 -->
         @for ($i = count($datas); $i < 4; $i++)
             <tr>
-                <td colspan="13"></td>
-                @if ($selectedType == 'POF' || !$selectedType)
+                <td colspan="{{ $fixedColspan }}"></td>
+                @foreach ($typeProducts as $tp)
                     <td></td>
                     <td></td>
-                @endif
-                @if ($selectedType == 'PP' || !$selectedType)
-                    <td></td>
-                    <td></td>
-                @endif
-                @if ($selectedType == 'Crosslink' || !$selectedType)
-                    <td></td>
-                    <td></td>
-                @endif
+                @endforeach
             </tr>
         @endfor
-        <!-- Total Waste -->
         <tr class="green">
-            <td colspan="13" style="text-align:right;">TOTAL WASTE</td>
-            @if ($selectedType == 'POF' || !$selectedType)
-                <td class="right">{{ number_format($saldo['POF'], 2) }}</td>
+            <td colspan="{{ $fixedColspan }}" style="text-align:right;">TOTAL WASTE</td>
+            @foreach ($typeProducts as $tp)
+                <td class="right">{{ number_format($saldo[$tp], 2) }}</td>
                 <td class="center">KG</td>
-            @endif
-            @if ($selectedType == 'PP' || !$selectedType)
-                <td class="right">{{ number_format($saldo['PP'], 2) }}</td>
-                <td class="center">KG</td>
-            @endif
-            @if ($selectedType == 'Crosslink' || !$selectedType)
-                <td class="right">{{ number_format($saldo['Crosslink'], 2) }}</td>
-                <td class="center">KG</td>
-            @endif
+            @endforeach
         </tr>
     </table>
 </body>
