@@ -334,6 +334,7 @@
                                         <th>Qty</th>
                                         <th>Unit</th>
                                         <th>Berat</th>
+                                        <th>QC Status</th>
                                         <th>Keterangan</th>
                                         <th>Action</th>
 
@@ -351,6 +352,7 @@
                                             <td>{{ $return->qty }}</td>
                                             <td>{{ $return->unit }}</td>
                                             <td>{{ $return->weight }}</td>
+                                            <td>{{ $return->qc_status }}</td>
                                             <td>{{ $return->keterangan }}</td>
 
                                             <td>
@@ -359,8 +361,7 @@
 
                                                 @if ($return->qc_status !== 'scrap')
                                                     <!-- Tombol Scrap buka modal -->
-                                                    <button type="button" class="btn btn-danger btn-sm"
-                                                        data-bs-toggle="modal"
+                                                    <button type="button" class="btn btn-danger " data-bs-toggle="modal"
                                                         data-bs-target="#modalScrap{{ $return->id }}">
                                                         Scrap
                                                     </button>
@@ -401,8 +402,6 @@
                                                             </form>
                                                         </div>
                                                     </div>
-                                                @else
-                                                    <span class="badge bg-success">Sudah Scrap</span>
                                                 @endif
                                             </td>
                                         </tr>

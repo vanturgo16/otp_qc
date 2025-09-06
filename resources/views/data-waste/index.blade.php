@@ -1,5 +1,11 @@
 @extends('layouts.master')
 @section('konten')
+
+    <style>
+        .modal-custom {
+            max-width: 90% !important;
+        }
+    </style>
     <div class="page-content">
         <div class="container-fluid">
             @if (session('pesan'))
@@ -17,10 +23,11 @@
                     </ul>
                 </div>
             @endif
+
             <div class="row">
                 <div class="col-12">
                     <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                        <h4 class="mb-sm-0 font-size-18">LPTS</h4>
+                        <h4 class="mb-sm-0 font-size-18">Data Waste</h4>
                         <div class="page-title-right">
                             <ol class="breadcrumb m-0">
                                 <li class="breadcrumb-item"><a href="{{ url('/dashboard') }}">QC</a></li>
@@ -30,12 +37,12 @@
                     </div>
                 </div>
             </div>
+
+            {{-- FILTER + ACTIONS --}}
             <div class="row">
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header">
-
-
                             <form action="{{ route('data-waste.index') }}" method="GET">
                                 <div class="d-flex justify-content-between align-items-end w-100 gap-2">
                                     <div class="d-flex gap-2">
@@ -62,11 +69,12 @@
                                                 Waste</a>
                                         </div>
                                     </div>
-                                    <!-- Tombol kanan sendiri (Add Data) -->
+
+                                    {{-- Kanan: Add Data --}}
                                     <div>
                                         <button type="button" class="btn btn-info" data-bs-toggle="modal"
-                                            data-bs-target="#modalAddReturn">
-                                            Add Data
+                                            data-bs-target="#modalAddWaste">
+                                            <i class="mdi mdi-plus"></i> Add Data
                                         </button>
                                     </div>
                                 </div>
@@ -74,10 +82,8 @@
                                 @push('scripts')
                                     <script>
                                         $(document).ready(function() {
-                                            // Export Excel Data Waste sesuai filter
                                             $('#exportExcelBtn').on('click', function(e) {
                                                 e.preventDefault();
-                                                // Ambil semua parameter filter dari form utama dan modal
                                                 var params = {};
                                                 params.no_report = $('#no_report').val();
                                                 params.no_so = $('#no_so').val();
@@ -88,7 +94,6 @@
                                                 params.status = $('#filter_status').val();
                                                 params.date_from = $('#date_from').val();
                                                 params.date_to = $('#date_to').val();
-                                                // Build query string
                                                 var query = $.param(params);
                                                 var url = "{{ route('data-waste.exportExcel') }}?" + query;
                                                 window.location.href = url;
@@ -96,7 +101,8 @@
                                         });
                                     </script>
                                 @endpush
-                                <!-- Modal Filter Data Waste -->
+
+                                {{-- Modal Filter Data Waste --}}
                                 <div class="modal fade" id="filterModalDataWaste" tabindex="-1"
                                     aria-labelledby="filterModalDataWasteLabel" aria-hidden="true">
                                     <div class="modal-dialog">
@@ -110,7 +116,6 @@
                                                         aria-label="Close"></button>
                                                 </div>
                                                 <div class="modal-body">
-
                                                     <div class="mb-3">
                                                         <label for="filter_type_product" class="form-label">Type
                                                             Product</label>
@@ -175,6 +180,8 @@
                         </div>
                         </form>
                     </div>
+
+                    {{-- TABLE --}}
                     <div class="card-body">
                         <div class="table-responsive " style="overflow-x: auto;">
                             <table id="data-wasteTable" class="table table-bordered table-striped nowrap">
@@ -191,8 +198,6 @@
                                         <th>Type Stock</th>
                                         <th>Status</th>
                                         <th>Remark</th>
-                                        <th>Action</th>
-
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -209,25 +214,22 @@
                                             <td>{{ $data->type_stock ?? '-' }}</td>
                                             <td>{{ $data->status ?? '-' }}</td>
                                             <td>{{ $data->remark ?? '-' }}</td>
-                                            <td>
-                                                {{-- <a href="{{ route('return-customer-ppic.print', $data->id) }}"
-                                                    class="btn btn-sm btn-primary" target="_blank">
-                                                    <i class="mdi mdi-printer"></i>
-                                                </a> --}}
-                                            </td>
+
                                         </tr>
                                     @endforeach
                                 </tbody>
                             </table>
                         </div>
                     </div>
+
                 </div>
             </div>
+
         </div>
     </div>
     </div>
 
-    <!-- Modal Filter Print -->
+    {{-- MODAL: Print Filter --}}
     <div class="modal fade" id="modalPrintWaste" tabindex="-1" aria-labelledby="modalPrintWasteLabel"
         aria-hidden="true">
         <div class="modal-dialog">
@@ -275,6 +277,118 @@
             </form>
         </div>
     </div>
+
+    {{-- MODAL: ADD DATA WASTE (UI Only) --}}
+    <div class="modal fade" id="modalAddWaste" tabindex="-1" aria-labelledby="modalAddWasteLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-custom">
+            <form id="addWasteForm" action="{{ route('data-waste.store') }}" method="POST">
+                @csrf
+                <div class="modal-content">
+                    <div class="modal-header bg-info text-white">
+                        <h5 class="modal-title" id="modalAddWasteLabel">
+                            <i class="mdi mdi-plus"></i> Add Data Waste
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        {{-- Request Number (preview) --}}
+                        <div class="mb-3">
+                            <label class="form-label">Request Number</label>
+                            <input type="text" class="form-control" value="{{ $report_number }}" readonly>
+                            <div class="form-text">Nomor ini akan dipakai saat simpan (bisa berubah jika ada user lain
+                                simpan bersamaan).</div>
+                        </div>
+
+                        {{-- Date --}}
+                        <div class="mb-3">
+                            <label for="waste_date_add" class="form-label">Date</label>
+                            <input type="date" id="waste_date_add" name="waste_date" class="form-control" required>
+                        </div>
+
+                        {{-- Type Product --}}
+                        <div class="mb-3">
+                            <label for="type_product_add" class="form-label">Type Product</label>
+                            <select id="type_product_add" name="type_product" class="form-select col-3" required>
+                                <option value="">-- Pilih --</option>
+                                <option value="PP">PP</option>
+                                <option value="POF">POF</option>
+                                <option value="Crosslink">Crosslink</option>
+                            </select>
+                        </div>
+
+                        {{-- Status --}}
+                        <div class="mb-3">
+                            <label class="form-label">Status</label>
+                            <input type="text" class="form-control" value="REQUEST" readonly>
+                        </div>
+
+
+                        {{-- Stok Waste (read-only) --}}
+                        <div class="mb-3">
+                            <label class="form-label">Stok Waste</label>
+                            <input type="text" id="stok_waste_view" class="form-control" value="By Stok Waste - kg"
+                                readonly>
+                            <input type="hidden" id="stok_waste_value" value="0"> {{-- buat validasi qty --}}
+                        </div>
+
+                        @push('scripts')
+                            <script>
+                                // Saat type product berubah → isi kolom stok dari objek STOCK_WASTE
+                                $(document).on('change', '#type_product_add', function() {
+                                    var type = ($(this).val() || '').toUpperCase();
+                                    var $view = $('#stok_waste_view');
+                                    var $val = $('#stok_waste_value');
+
+                                    if (!type) {
+                                        $view.val('By Stok Waste - kg');
+                                        $val.val('0');
+                                        return;
+                                    }
+
+                                    // ambil stok dari objek preload; jika tidak ada, 0
+                                    var stock = parseFloat(STOCK_WASTE[type] ?? 0);
+                                    $view.val('By Stok Waste ' + type + ' ' + stock + ' kg');
+                                    $val.val(stock);
+                                });
+
+                                // Validasi ringan: qty <= stok (opsional)
+                                $(document).on('submit', '#addWasteForm', function(e) {
+                                    var stok = parseFloat($('#stok_waste_value').val() || '0');
+                                    var qty = parseFloat($('#qty_take_add').val() || '0');
+                                    if (qty > stok) {
+                                        e.preventDefault();
+                                        alert('Qty Take melebihi Stok Waste.');
+                                    }
+                                });
+                            </script>
+                        @endpush
+
+
+
+                        {{-- Qty Take --}}
+                        <div class="mb-3">
+                            <label for="qty_take_add" class="form-label">Qty Take (kg)</label>
+                            <input type="number" step="0.01" min="0.01" id="qty_take_add" name="qty_take"
+                                class="form-control" required>
+                        </div>
+
+                        {{-- Remark --}}
+                        <div class="mb-3">
+                            <label for="remark_add" class="form-label">Remark</label>
+                            <textarea id="remark_add" name="remark" class="form-control" rows="2" placeholder="Catatan (opsional)"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        {{-- tombol submit dinonaktifkan karena UI only --}}
+                        <button type="submit" class="btn btn-info">Submit</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 @endsection
 
 @push('scripts')
@@ -282,15 +396,22 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+
+    <script>
+        // preload stok dari server (tanpa API call)
+        const STOCK_WASTE = @json($stockMap); // contoh: { "PP": 120.5, "POF": 30, "CROSSLINK": 0 }
+    </script>
+
     <script>
         $(document).ready(function() {
             $('#data-wasteTable').DataTable({});
+
             $('#printWasteBtn').on('click', function(e) {
                 e.preventDefault();
                 $('#modalPrintWaste').modal('show');
             });
 
-            // Validasi minimal 1 type product harus dipilih
+            // Validasi minimal 1 type product untuk print
             $('#formPrintWaste').on('submit', function(e) {
                 var checked = $('input[name="type_product[]"]:checked').length;
                 if (checked < 1) {

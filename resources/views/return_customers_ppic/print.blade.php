@@ -100,7 +100,7 @@
     <table style="margin-top:8px; width:100%;">
         <tr style="font-weight:bold; text-align:center;">
             <th style="width:30px;">NO</th>
-            <th>NAMA BARANG</th>
+            <th colspan="2">NAMA BARANG</th>
             <th>NO. SURAT JALAN</th>
             <th>NO. PO</th>
             <th style="width:60px;">JUMLAH</th>
@@ -112,14 +112,14 @@
         @foreach ($datas as $i => $data)
             <tr>
                 <td style="text-align:center;">{{ $i + 1 }}</td>
-                <td style="text-align:left;">{{ $data->name ?? '' }}</td>
+                <td style="text-align:left;" colspan="2">{{ $data->name ?? '' }}</td>
                 <td style="text-align:left;">{{ $data->dn_number ?? '' }}</td>
                 <td style="text-align:left;">{{ $data->no_po ?? '' }}</td>
                 <td style="text-align:center;">{{ $data->qty ?? '' }}</td>
                 <td style="text-align:center;">{{ $data->unit ?? '' }}</td>
                 <td style="text-align:center;">{{ $data->weight ?? '' }}</td>
                 <td style="text-align:left;">{{ $data->keterangan ?? '' }}</td>
-                <td style="text-align:left;">{{ $data->tindakan ?? '' }}</td>
+                <td style="text-align:left;">{{ $data->qc_status ?? '' }}</td>
             </tr>
         @endforeach
 

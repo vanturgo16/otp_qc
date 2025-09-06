@@ -11,6 +11,8 @@ use PhpParser\Node\Stmt\Return_;
 use App\Exports\ReturnCustomerPpicExport;
 use Maatwebsite\Excel\Facades\Excel;
 
+use function Laravel\Prompts\select;
+
 class ReturnCustomerPPIC extends Controller
 {
 public function index( Request $request)
@@ -214,9 +216,22 @@ public function scrap($id)
         return back()->with('error', 'Data Return Customer tidak ditemukan!');
     }
 
-    $delivery_detail = DB::table('delivery_note_details')->where('id', $return->id_delivery_note_details)->first();
+    $delivery_detail = DB::table('delivery_note_details as dnd')
+    ->leftjoin('sales_orders as so', 'dnd.id_sales_orders', '=', 'so.id')
+    ->leftJoin('master_product_fgs as mpf', 'so.id_master_products', '=', 'mpf.id')
+    ->leftJoin('delivery_notes as dn', 'dnd.id_delivery_notes', '=', 'dn.id')
+    ->leftJoin('return_customers_ppic as rcp', 'dnd.id', '=', 'rcp.id_delivery_note_details')
+    ->where('dnd.id', $return->id_delivery_note_details)
+    ->select('dn.dn_number as no_report',
+            'mpf.type_product as type_product',
+            'rcp.qty',
+            'dnd.id_sales_orders'
+            )->first();
+          
     $id_sales_orders = $delivery_detail ? $delivery_detail->id_sales_orders : null;
     $type_product = $delivery_detail ? $delivery_detail->type_product : null;
+    $no_report = $delivery_detail ? $delivery_detail->no_report : null;
+    $qty = $delivery_detail ? $delivery_detail->qty : null;
 
     $id_master_products = null;
     if ($id_sales_orders) {
@@ -232,18 +247,43 @@ public function scrap($id)
             ->first();
         $remark = $history ? $history->remarks : null;
     }
+    
 
     $waste_date = request('waste_date') ?? now()->format('Y-m-d');
 
     DB::table('data_waste')->insert([
         'id_resource'         => $return->id,
         'id_resource_column'  => 'return_customers_ppic_id',
-        'status'              => 'return',
+        'no_report'           => $no_report,
+        'status'              => 'RETURN',
         'remark'              => $remark,
         'waste_date'          => $waste_date,
+        'weight'              => $qty ? $qty : null,
+        'type_stock'          => 'IN',
+        'type_product'        => $type_product,
         'created_at'          => now(),
         'updated_at'          => now(),
     ]);
+
+     // Update Insert ke data_stock_waste
+    $existingStock = DB::table('data_stock_waste')->where('type_product', $type_product)->first();
+    if ($existingStock) {
+        // Update: tambah stock
+        DB::table('data_stock_waste')
+            ->where('type_product', $type_product)
+            ->update([
+                'stock' => $existingStock->stock + ($qty ? $qty : 0),
+                'updated_at' => now(),
+            ]);
+    } else {
+        // Insert baru
+        DB::table('data_stock_waste')->insert([
+            'type_product' => $type_product,
+            'stock' => $qty ? $qty : 0,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+    }
 
     DB::table('return_customers_ppic')->where('id', $id)->update([
         'qc_status' => 'scrap'

@@ -156,6 +156,7 @@
                                         <th>Weight</th>
                                         <th>Date Report</th>
                                         <th>Status</th>
+                                        <th>QC Status</th>
                                         <th>Keterangan</th>
                                         <th>Action</th>
                                     </tr>
@@ -177,6 +178,7 @@
                                             <td>{{ $data->weight ?? '-' }}</td>
                                             <td>{{ $data->created_at_formatted ?? '-' }}</td>
                                             <td>{{ $data->status ?? '-' }}</td>
+                                            <td>{{ $data->qc_status ?? '-' }}</td>
                                             <td style="min-width: 350px;" class="text-wrap text-center">
                                                 @if (!empty($data->keterangan))
                                                     <span class="text-justify">{{ $data->keterangan }}</span>

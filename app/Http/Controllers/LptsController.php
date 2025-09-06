@@ -23,6 +23,7 @@ class LptsController extends Controller
             ->leftJoin('master_product_fgs as mpf', 'wo.id_master_products', '=', 'mpf.id')
             ->leftJoin('master_group_subs as mgs', 'mpf.id_master_group_subs', '=', 'mgs.id')
             ->leftJoin('master_units as mu', 'wo.id_master_units', '=', 'mu.id')
+            ->leftJoin('lpts', 'wo.id', '=', 'lpts.id_wo')
             ->whereIn('wo.status', ['Request', 'Un posted']);
 
         if ($request->filled('packing_number')) {
@@ -60,7 +61,8 @@ class LptsController extends Controller
             'mpf.thickness',
             'mgs.name as group_sub_name',
             'mu.unit',
-              'mpf.weight'
+            'mpf.weight',
+            'lpts.qc_status',
         )
         ->get();
 
@@ -127,6 +129,7 @@ class LptsController extends Controller
             ->leftJoin('master_product_fgs as mpf', 'wo.id_master_products', '=', 'mpf.id')
             ->leftJoin('master_group_subs as mgs', 'mpf.id_master_group_subs', '=', 'mgs.id')
             ->leftJoin('master_units as mu', 'wo.id_master_units', '=', 'mu.id')
+            ->leftJoin('lpts', 'wo.id', '=', 'lpts.id_wo')
             ->whereIn('wo.status', ['Request', 'Un posted']);
 
         // Filter by form modal
@@ -165,7 +168,8 @@ class LptsController extends Controller
             'mpf.thickness',
             'mgs.name as group_sub_name',
             'mu.unit',
-           'mpf.weight'
+            'mpf.weight',
+            'lpts.qc_status',
         )
         ->limit(100)
         ->get();
@@ -320,10 +324,18 @@ public function scrap($id)
         return back()->with('error', 'Data LPTS tidak ditemukan!');
     }
 
-    $wo = DB::table('work_orders')->where('id', $lpts->id_wo)->first();
+    // Ambil WO dan type_product dari master_product_fgs
+    $wo = DB::table('work_orders')
+        ->leftJoin('master_product_fgs as mpf', 'work_orders.id_master_products', '=', 'mpf.id')
+        ->leftJoin('lpts', 'work_orders.id', '=', 'lpts.id_wo')
+        ->where('work_orders.id', $lpts->id_wo)
+        ->select('work_orders.*', 'mpf.type_product', 'lpts.no_lpts as no_report')
+        ->first();
+ 
     $id_master_products = $wo ? $wo->id_master_products : null;
-    $type_product = $wo ? $wo->type_product : null; // Ambil type_product dari WO
-
+    $qty = $wo ? $wo->qty : 0;
+    $type_product = $wo ? $wo->type_product : null;
+    $no_report = $wo ? $wo->no_report : null;
     $remark = null;
     if ($id_master_products) {
         $history = DB::table('history_stocks')
@@ -339,13 +351,35 @@ public function scrap($id)
     DB::table('data_waste')->insert([
         'id_resource'         => $lpts->id,
         'id_resource_column'  => 'lpts_id',
-        'status'              => 'qc',
+        'no_report'           => $no_report,
+        'status'              => 'QC',
         'remark'              => $remark,
         'waste_date'          => $waste_date,
+        'weight'              => $qty ? $qty : null,
+        'type_stock'          => 'IN',
+        'type_product'        => $type_product, // <-- tambahkan ini
         'created_at'          => now(),
         'updated_at'          => now(),
     ]);
-
+    // Update Insert ke data_stock_waste
+    $existingStock = DB::table('data_stock_waste')->where('type_product', $type_product)->first();
+    if ($existingStock) {
+        // Update: tambah stock
+        DB::table('data_stock_waste')
+            ->where('type_product', $type_product)
+            ->update([
+                'stock' => $existingStock->stock + ($qty ? $qty : 0),
+                'updated_at' => now(),
+            ]);
+    } else {
+        // Insert baru
+        DB::table('data_stock_waste')->insert([
+            'type_product' => $type_product,
+            'stock' => $qty ? $qty : 0,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+    }
     DB::table('lpts')->where('id', $id)->update([
         'qc_status' => 'scrap'
     ]);

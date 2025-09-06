@@ -11,6 +11,7 @@
             <th>Unit</th>
             <th>Berat</th>
             <th>Keterangan</th>
+            <th>Status QC</th>
         </tr>
     </thead>
     <tbody>
@@ -26,6 +27,7 @@
                 <td>{{ $return->unit }}</td>
                 <td>{{ $return->weight }}</td>
                 <td>{{ $return->keterangan }}</td>
+                <td>{{ $return->qc_status }}</td>
             </tr>
         @endforeach
     </tbody>

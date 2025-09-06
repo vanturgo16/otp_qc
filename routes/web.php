@@ -77,7 +77,9 @@ Route::middleware(['auth', 'clear.permission.cache', 'permission:PPIC'])->group(
             Route::get('/', 'index')->name('data-waste.index');
             Route::get('/print', [DataWasteController::class, 'print'])->name('data-waste.print');
             Route::get('/export-excel', [DataWasteController::class, 'exportExcel'])->name('data-waste.exportExcel');
-           
+            Route::post('/store', [DataWasteController::class, 'storeAddWaste'])->name('data-waste.store');
+        
+
         });
     });
 
