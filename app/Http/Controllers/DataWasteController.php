@@ -178,7 +178,14 @@ class DataWasteController extends Controller
         ->orderByDesc('created_at')
         ->get();
 
+  $stockWaste = DB::table('data_stock_waste');
+            $stockWaste = $stockWaste->select(
+                'type_product',
+                'stock',
+                'updated_at'
+            )->get();
 
+         
 
     // === data bantu untuk view ===
     $typeProducts = DB::table('master_product_fgs')
@@ -201,7 +208,7 @@ class DataWasteController extends Controller
         ->get()
         ->mapWithKeys(fn($r) => [strtoupper($r->type_product) => (float)$r->stock]);
 
-    return view('data-waste.index', compact('datas', 'typeProducts', 'report_number', 'stockMap'));
+    return view('data-waste.index', compact('datas', 'typeProducts', 'report_number', 'stockMap','stockWaste'));
 }
 
 

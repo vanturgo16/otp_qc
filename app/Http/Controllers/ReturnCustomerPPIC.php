@@ -86,7 +86,7 @@ public function index( Request $request)
     }
 
     $returns = $returns->orderBy('return_customers_ppic.created_at', 'desc')->get();
-        dump($returns);
+     
 
     return view('return_customers_ppic.index', compact('dn_details', 'returns'));
 }
@@ -95,7 +95,7 @@ public function index( Request $request)
 public function store(Request $request)
 {
 
-    dump($request->all());
+   
    $request->validate([
     'id_delivery_note_details' => 'required|integer',
     'id_delivery_notes' => 'required|integer',

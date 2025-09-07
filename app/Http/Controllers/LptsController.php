@@ -171,9 +171,17 @@ class LptsController extends Controller
             'mpf.weight',
             'lpts.qc_status',
         )
-        ->limit(100)
         ->get();
 
+
+        $stock_waste = DB::table('data_stock_waste');
+            $stock_waste = $stock_waste->select(
+                'type_product',
+                'stock',
+                'updated_at'
+            )->get();
+
+            dump($stock_waste);
        $bulanRomawi = $this->toRoman(now()->format('n'));
         $tahun = now()->format('y');
         $urut = 1; // urutan hanya untuk WO yang belum punya LPTS

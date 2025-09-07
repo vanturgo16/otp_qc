@@ -20,7 +20,7 @@
             <div class="row">
                 <div class="col-12">
                     <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                        <h4 class="mb-sm-0 font-size-18">LPTS</h4>
+                        <h4 class="mb-sm-0 font-size-18">Return Customer PPIC</h4>
                         <div class="page-title-right">
                             <ol class="breadcrumb m-0">
                                 <li class="breadcrumb-item"><a href="{{ url('/dashboard') }}">QC</a></li>
@@ -75,9 +75,9 @@
                                                             <div class="text-danger">{{ $message }}</div>
                                                         @enderror
                                                     </div>
-                                                    <!-- Tanggal -->
+                                                    <!-- Date -->
                                                     <div class="col-md-6">
-                                                        <label for="tanggal" class="form-label">Tanggal</label>
+                                                        <label for="tanggal" class="form-label">Date</label>
                                                         <input type="date" name="tanggal" id="tanggal"
                                                             class="form-control" required>
                                                         @error('tanggal')
@@ -114,10 +114,9 @@
                                                             <div class="text-danger">{{ $message }}</div>
                                                         @enderror
                                                     </div>
-                                                    <!-- Nama Produk -->
+                                                    <!-- Product Name -->
                                                     <div class="col-md-6">
-                                                        <label for="name" class="form-label">Nama
-                                                            Produk</label>
+                                                        <label for="name" class="form-label">Product Name</label>
                                                         <input type="text" name="name" id="name"
                                                             class="form-control" readonly>
                                                         @error('name')
@@ -144,9 +143,9 @@
                                                             <div class="text-danger">{{ $message }}</div>
                                                         @enderror
                                                     </div>
-                                                    <!-- Berat -->
+                                                    <!-- Weight -->
                                                     <div class="col-md-4">
-                                                        <label for="berat" class="form-label">Berat</label>
+                                                        <label for="berat" class="form-label">Weight</label>
                                                         <input type="number" name="berat" id="berat"
                                                             class="form-control" step="1" min="0">
                                                         @error('berat')
@@ -291,17 +290,17 @@
                                                             value="{{ request('so_number') }}">
                                                     </div>
                                                     <div class="mb-3">
-                                                        <label class="form-label">Tanggal Return</label>
+                                                        <label class="form-label">Date Return</label>
                                                         <div class="row g-2">
                                                             <div class="col-md-6">
-                                                                <label for="date_from" class="form-label">Dari
-                                                                    Tanggal</label>
+                                                                <label for="date_from" class="form-label">From
+                                                                    Date</label>
                                                                 <input type="date" class="form-control" id="date_from"
                                                                     name="date_from" value="{{ request('date_from') }}">
                                                             </div>
                                                             <div class="col-md-6">
-                                                                <label for="date_to" class="form-label">Sampai
-                                                                    Tanggal</label>
+                                                                <label for="date_to" class="form-label">To
+                                                                    Date</label>
                                                                 <input type="date" class="form-control" id="date_to"
                                                                     name="date_to" value="{{ request('date_to') }}">
                                                             </div>
@@ -325,15 +324,15 @@
                             <table id="lptsTable" class="table table-bordered table-striped nowrap">
                                 <thead>
                                     <tr>
-                                        <th>Tanggal</th>
+                                        <th>Date</th>
                                         <th>No DN</th>
                                         <th>Customer</th>
                                         <th>No PO</th>
                                         <th>No SO</th>
-                                        <th>Nama Produk</th>
+                                        <th>Product Name</th>
                                         <th>Qty</th>
                                         <th>Unit</th>
-                                        <th>Berat</th>
+                                        <th>Weight</th>
                                         <th>QC Status</th>
                                         <th>Keterangan</th>
                                         <th>Action</th>
@@ -385,7 +384,7 @@
                                                                             data-bs-dismiss="modal"></button>
                                                                     </div>
                                                                     <div class="modal-body">
-                                                                        <label for="waste_date{{ $return->id }}">Tanggal
+                                                                        <label for="waste_date{{ $return->id }}">Date
                                                                             Scrap</label>
                                                                         <input type="date" name="waste_date"
                                                                             id="waste_date{{ $return->id }}"

@@ -41,6 +41,45 @@
             {{-- FILTER + ACTIONS --}}
             <div class="row">
                 <div class="col-12">
+
+                    {{-- CARD: Stock Waste --}}
+                    <div class="card">
+                        <div class="card-header bg-success text-white">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0"><i class="mdi mdi-database"></i> Stock Waste</h5>
+                                <small class="opacity-75">Ringkasan stok per Type Product</small>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive" style="overflow-x: auto;">
+                                <table id="stockWasteTable" class="table table-bordered table-striped nowrap">
+                                    <thead>
+                                        <tr>
+                                            <th>Type Product</th>
+                                            <th>Stock (kg)</th>
+                                            <th>Updated At</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @forelse($stockWaste as $sw)
+                                            <tr>
+                                                <td>{{ strtoupper($sw->type_product) }}</td>
+                                                <td>{{ number_format((float) $sw->stock, 2) }}</td>
+                                                <td>
+                                                    {{ $sw->updated_at ? \Carbon\Carbon::parse($sw->updated_at)->format('Y-m-d') : '-' }}
+                                                </td>
+                                            </tr>
+                                        @empty
+                                            <tr>
+                                                <td colspan="3" class="text-center">Belum ada data stok.</td>
+                                            </tr>
+                                        @endforelse
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="card">
                         <div class="card-header">
                             <form action="{{ route('data-waste.index') }}" method="GET">
@@ -65,7 +104,8 @@
                                             </button>
                                             <a href="{{ route('data-waste.exportExcel') }}" id="exportExcelBtn"
                                                 class="btn btn-success">Export Excel</a>
-                                            <a href="#" id="printWasteBtn" class="btn btn-warning">Print Stock Card
+                                            <a href="#" id="printWasteBtn" class="btn btn-warning">Print Stock
+                                                Card
                                                 Waste</a>
                                         </div>
                                     </div>
@@ -124,7 +164,8 @@
                                                             value="{{ request('type_product') }}">
                                                     </div>
                                                     <div class="mb-3">
-                                                        <label for="filter_group_sub" class="form-label">Group Sub</label>
+                                                        <label for="filter_group_sub" class="form-label">Group
+                                                            Sub</label>
                                                         <input type="text" class="form-control" id="filter_group_sub"
                                                             name="group_sub" placeholder="Group Sub..."
                                                             value="{{ request('group_sub') }}">
@@ -181,6 +222,7 @@
                         </form>
                     </div>
 
+
                     {{-- TABLE --}}
                     <div class="card-body">
                         <div class="table-responsive " style="overflow-x: auto;">
@@ -224,6 +266,8 @@
 
                 </div>
             </div>
+
+
 
         </div>
     </div>
@@ -327,8 +371,7 @@
                         {{-- Stok Waste (read-only) --}}
                         <div class="mb-3">
                             <label class="form-label">Stok Waste</label>
-                            <input type="text" id="stok_waste_view" class="form-control" value="By Stok Waste - kg"
-                                readonly>
+                            <input type="text" id="stok_waste_view" class="form-control" value="- kg" readonly>
                             <input type="hidden" id="stok_waste_value" value="0"> {{-- buat validasi qty --}}
                         </div>
 
@@ -341,14 +384,14 @@
                                     var $val = $('#stok_waste_value');
 
                                     if (!type) {
-                                        $view.val('By Stok Waste - kg');
+                                        $view.val('- kg');
                                         $val.val('0');
                                         return;
                                     }
 
                                     // ambil stok dari objek preload; jika tidak ada, 0
                                     var stock = parseFloat(STOCK_WASTE[type] ?? 0);
-                                    $view.val('By Stok Waste ' + type + ' ' + stock + ' kg');
+                                    $view.val(stock + ' kg');
                                     $val.val(stock);
                                 });
 
