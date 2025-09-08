@@ -5,11 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class MstCurrencies extends Model
+class MstCountries extends Model
 {
     use HasFactory;
-    protected $table = 'master_currencies';
-    protected $guarded=[
+    protected $table = 'master_countries';
+    protected $guarded = [
         'id'
     ];
 

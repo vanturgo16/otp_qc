@@ -18,4 +18,19 @@ class MstCustomers extends Model
     {
         return $this->hasMany(\App\Models\Marketing\InputPOCust::class, 'id_master_customers', 'id');
     }
+
+    public function customerAddress()
+    {
+        return $this->belongsTo(\App\Models\MstCustomersAddress::class, 'id', 'id_master_customers');
+    }
+
+    public function currency()
+    {
+        return $this->belongsTo(\App\Models\MstCurrencies::class, 'id_master_currencies', 'id');
+    }
+
+    public function termPayment()
+    {
+        return $this->belongsTo(\App\Models\MstTermPayments::class, 'id_master_term_payments', 'id');
+    }
 }

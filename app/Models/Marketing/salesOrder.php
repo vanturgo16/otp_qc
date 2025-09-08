@@ -2,7 +2,7 @@
 
 namespace App\Models\Marketing;
 
-use App\Models\marketing\salesOrderDetail;
+use App\Models\Marketing\salesOrderDetail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -36,5 +36,22 @@ class salesOrder extends Model
     public function masterSalesman()
     {
         return $this->belongsTo(\App\Models\MstSalesmans::class, 'id_master_salesmen', 'id');
+    }
+
+    // Definisikan relasi one-to-many ke tabel po_customer_details
+    public function orderConfirmationDetails()
+    {
+        return $this->hasMany(OrderConfirmationDetail::class, 'oc_number', 'id_order_confirmations');
+    }
+
+    // Definisikan relasi many-to-one ke tabel master_term_payments
+    public function masterTermPAyment()
+    {
+        return $this->belongsTo(\App\Models\MstTermPayments::class, 'id_master_term_payments', 'id');
+    }
+
+    public function masterCustomerAddress()
+    {
+        return $this->hasMany(\App\Models\MstCustomersAddress::class, 'id_master_customers', 'id_master_customers');
     }
 }

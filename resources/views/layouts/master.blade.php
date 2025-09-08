@@ -11,12 +11,16 @@
 
     <link rel="shortcut icon" href="{{ asset('assets/images/icon-otp.png') }}">
     <!-- plugin css -->
-    <link href="{{ asset('assets/libs/admin-resources/jquery.vectormap/jquery-jvectormap-1.2.2.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('assets/libs/admin-resources/jquery.vectormap/jquery-jvectormap-1.2.2.css') }}" rel="stylesheet"
+        type="text/css" />
     <!-- DataTables -->
-    <link href="{{ asset('assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css') }}" rel="stylesheet" type="text/css" />
-    <link href="{{ asset('assets/libs/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css') }}" rel="stylesheet"
+        type="text/css" />
+    <link href="{{ asset('assets/libs/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css') }}" rel="stylesheet"
+        type="text/css" />
     <!-- Responsive datatable examples -->
-    <link href="{{ asset('assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css') }}"
+        rel="stylesheet" type="text/css" />
     <!-- preloader css -->
     <link rel="stylesheet" href="{{ asset('assets/css/preloader.min.css') }}" type="text/css" />
     <!-- Bootstrap Css -->
@@ -26,20 +30,22 @@
     <!-- App Css-->
     <link href="{{ asset('assets/css/app.min.css') }}" id="app-style" rel="stylesheet" type="text/css" />\
     <!-- choices css -->
-    <link href="{{ asset('assets/libs/choices.js/public/assets/styles/choices.min.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('assets/libs/choices.js/public/assets/styles/choices.min.css') }}" rel="stylesheet"
+        type="text/css" />
 
     {{-- Custom --}}
     <link href="{{ asset('assets/css/custom.css') }}" id="app-style" rel="stylesheet" type="text/css" />
-    <link href="{{ asset('assets/libs/choices.js/public/assets/styles/choices.min.css') }}" id="app-style" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('assets/libs/choices.js/public/assets/styles/choices.min.css') }}" id="app-style"
+        rel="stylesheet" type="text/css" />
 
     {{-- Jquery --}}
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
     @if (request()->is('ppic/*'))
-    <link rel="stylesheet" href="{{ asset('assets/css/ppic/style.css') }}">
+        <link rel="stylesheet" href="{{ asset('assets/css/ppic/style.css') }}">
     @endif
 
     <style>
@@ -67,7 +73,7 @@
                     <div class="navbar-brand-box">
 
                         <a href="https://sso.olefinatifaplas.my.id/menu" class="logo logo-dark">
-                        {{-- <a href="/dashboard" class="logo logo-dark"> --}}
+                            {{-- <a href="/dashboard" class="logo logo-dark"> --}}
 
                             <span class="logo-sm">
                                 <img src="{{ asset('assets/images/icon-otp.png') }}" alt="" height="30">
@@ -136,14 +142,18 @@
                     </div>
 
                     <div class="dropdown d-inline-block">
-                        <button type="button" class="btn header-item bg-light-subtle border-start border-end" id="page-header-user-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <img class="rounded-circle header-profile-user" src="{{ asset('assets/images/users/userbg.png') }}" alt="Header Avatar">
+                        <button type="button" class="btn header-item bg-light-subtle border-start border-end"
+                            id="page-header-user-dropdown" data-bs-toggle="dropdown" aria-haspopup="true"
+                            aria-expanded="false">
+                            <img class="rounded-circle header-profile-user"
+                                src="{{ asset('assets/images/users/userbg.png') }}" alt="Header Avatar">
                             <span class="d-none d-xl-inline-block ms-1 fw-medium">{{ Auth::user()->name }}</span>
                             <i class="mdi mdi-chevron-down d-none d-xl-inline-block"></i>
                         </button>
                         <div class="dropdown-menu dropdown-menu-end">
                             <!-- item-->
-                            <a class="dropdown-item" href="" data-bs-toggle="modal" data-bs-target="#logout"><i class="mdi mdi-logout font-size-16 align-middle me-1"></i>
+                            <a class="dropdown-item" href="" data-bs-toggle="modal"
+                                data-bs-target="#logout"><i class="mdi mdi-logout font-size-16 align-middle me-1"></i>
                                 Logout</a>
                         </div>
                     </div>
@@ -165,41 +175,46 @@
                                 <span data-key="t-dashboard">Dashboard</span>
                             </a>
                         </li>
-                        
+
 
                         @can('PPIC')
-                        <li class="{{ request()->is('ppic/*') ? 'mm-active' : '' }}">
-                            <a href="javascript: void(0);" class="has-arrow">
-                                <i data-feather="briefcase"></i>
-                                <span data-key="t-blog">Data Produk</span>
-                            </a>
-                            <ul class="sub-menu" aria-expanded="false">
-                                @can('PPIC_good-receipt-note')
-                                <li><a href="/history-stok" data-key="t-blog-grid">History Stock</a></li>
-                                @endcan
+                            <li class="{{ request()->is('ppic/*') ? 'mm-active' : '' }}">
+                                <a href="javascript: void(0);" class="has-arrow">
+                                    <i data-feather="briefcase"></i>
+                                    <span data-key="t-blog">Data Produk</span>
+                                </a>
+                                <ul class="sub-menu" aria-expanded="false">
+                                    @can('PPIC_workOrder')
+                                        <li><a href="{{ url('data-sample/') }}" data-key="t-blog-grid">Data Sample</a></li>
+                                        <li><a href="{{ url('lpts/') }}" data-key="t-blog-grid">Data LPTS</a></li>
+                                        <li><a href="{{ url('return-customer-ppic/') }}" data-key="t-blog-grid">Return
+                                                Customer PPIC</a></li>
+                                        <li><a href="{{ url('data-waste/') }}" data-key="t-blog-grid">
+                                                Data Waste</a></li>
+                                    @endcan
 
-                                @can('PPIC_grn-qc')
-                                <li><a href="/coa" data-key="t-blog-grid">COA</a></li>
-                                @endcan
+                                    @can('PPIC_good-receipt-note')
+                                        <li><a href="/history-stok" data-key="t-blog-grid">History Stock</a></li>
+                                    @endcan
 
-                                @can('PPIC_external-no-lot')
-                                <li><a href="/external-no-lot" data-key="t-blog-grid">Return Customer</a></li>
-                                @endcan
+                                    @can('PPIC_grn-qc')
+                                        <li><a href="/coa" data-key="t-blog-grid">COA</a></li>
+                                    @endcan
 
-                                @can('PPIC_workOrder')
-                                <li><a href="{{ url('') }}" data-key="t-blog-grid">Sample</a></li>
-                                @endcan
+                                    @can('PPIC_external-no-lot')
+                                        <li><a href="/external-no-lot" data-key="t-blog-grid">Return Customer</a></li>
+                                    @endcan
 
-                                {{-- <li><a href="{{ route('ppic.workOrder.index') }}"
+                                    {{-- <li><a href="{{ route('ppic.workOrder.index') }}"
                                 class="{{ request()->is('ppic/workOrder/*') ? 'active' : '' }}"><i data-feather="clipboard"></i>Word Order</a>
                         </li> --}}
-                    </ul>
-                    </li>
-                    @endcan
+                                </ul>
+                            </li>
+                        @endcan
 
 
 
-                    {{-- @can('PPIC_user_management')
+                        {{-- @can('PPIC_user_management')
                     <li class="{{ request()->is('user/*') ? 'mm-active' : '' }}">
                         <a href="javascript: void(0);" class="has-arrow">
                             <i data-feather="users"></i>
@@ -258,21 +273,25 @@
         <!-- end main content-->
 
         {{-- Modal Logout --}}
-        <div class="modal fade" id="logout" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal fade" id="logout" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+            role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-top" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="staticBackdropLabel">Logout</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         <p>Select "Logout" below if you are ready to end your current session.</p>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                        <form action="{{ route('logout') }}" id="formlogout" method="POST" enctype="multipart/form-data">
+                        <form action="{{ route('logout') }}" id="formlogout" method="POST"
+                            enctype="multipart/form-data">
                             @csrf
-                            <button type="submit" class="btn btn-danger waves-effect btn-label waves-light" name="sb"><i class="mdi mdi-logout label-icon"></i>Logout</button>
+                            <button type="submit" class="btn btn-danger waves-effect btn-label waves-light"
+                                name="sb"><i class="mdi mdi-logout label-icon"></i>Logout</button>
                         </form>
                         <script>
                             document.getElementById('formlogout').addEventListener('submit', function(event) {
@@ -312,96 +331,115 @@
             <div class="p-4">
                 <h6 class="mb-3">Layout</h6>
                 <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="layout" id="layout-vertical" value="vertical">
+                    <input class="form-check-input" type="radio" name="layout" id="layout-vertical"
+                        value="vertical">
                     <label class="form-check-label" for="layout-vertical">Vertical</label>
                 </div>
                 <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="layout" id="layout-horizontal" value="horizontal">
+                    <input class="form-check-input" type="radio" name="layout" id="layout-horizontal"
+                        value="horizontal">
                     <label class="form-check-label" for="layout-horizontal">Horizontal</label>
                 </div>
 
                 <h6 class="mt-4 mb-3 pt-2">Layout Mode</h6>
 
                 <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="layout-mode" id="layout-mode-light" value="light">
+                    <input class="form-check-input" type="radio" name="layout-mode" id="layout-mode-light"
+                        value="light">
                     <label class="form-check-label" for="layout-mode-light">Light</label>
                 </div>
                 <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="layout-mode" id="layout-mode-dark" value="dark">
+                    <input class="form-check-input" type="radio" name="layout-mode" id="layout-mode-dark"
+                        value="dark">
                     <label class="form-check-label" for="layout-mode-dark">Dark</label>
                 </div>
 
                 <h6 class="mt-4 mb-3 pt-2">Layout Width</h6>
 
                 <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="layout-width" id="layout-width-fuild" value="fuild" onchange="document.body.setAttribute('data-layout-size', 'fluid')">
+                    <input class="form-check-input" type="radio" name="layout-width" id="layout-width-fuild"
+                        value="fuild" onchange="document.body.setAttribute('data-layout-size', 'fluid')">
                     <label class="form-check-label" for="layout-width-fuild">Fluid</label>
                 </div>
                 <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="layout-width" id="layout-width-boxed" value="boxed" onchange="document.body.setAttribute('data-layout-size', 'boxed')">
+                    <input class="form-check-input" type="radio" name="layout-width" id="layout-width-boxed"
+                        value="boxed" onchange="document.body.setAttribute('data-layout-size', 'boxed')">
                     <label class="form-check-label" for="layout-width-boxed">Boxed</label>
                 </div>
 
                 <h6 class="mt-4 mb-3 pt-2">Layout Position</h6>
 
                 <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="layout-position" id="layout-position-fixed" value="fixed" onchange="document.body.setAttribute('data-layout-scrollable', 'false')">
+                    <input class="form-check-input" type="radio" name="layout-position" id="layout-position-fixed"
+                        value="fixed" onchange="document.body.setAttribute('data-layout-scrollable', 'false')">
                     <label class="form-check-label" for="layout-position-fixed">Fixed</label>
                 </div>
                 <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="layout-position" id="layout-position-scrollable" value="scrollable" onchange="document.body.setAttribute('data-layout-scrollable', 'true')">
+                    <input class="form-check-input" type="radio" name="layout-position"
+                        id="layout-position-scrollable" value="scrollable"
+                        onchange="document.body.setAttribute('data-layout-scrollable', 'true')">
                     <label class="form-check-label" for="layout-position-scrollable">Scrollable</label>
                 </div>
 
                 <h6 class="mt-4 mb-3 pt-2">Topbar Color</h6>
 
                 <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="topbar-color" id="topbar-color-light" value="light" onchange="document.body.setAttribute('data-topbar', 'light')">
+                    <input class="form-check-input" type="radio" name="topbar-color" id="topbar-color-light"
+                        value="light" onchange="document.body.setAttribute('data-topbar', 'light')">
                     <label class="form-check-label" for="topbar-color-light">Light</label>
                 </div>
                 <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="topbar-color" id="topbar-color-dark" value="dark" onchange="document.body.setAttribute('data-topbar', 'dark')">
+                    <input class="form-check-input" type="radio" name="topbar-color" id="topbar-color-dark"
+                        value="dark" onchange="document.body.setAttribute('data-topbar', 'dark')">
                     <label class="form-check-label" for="topbar-color-dark">Dark</label>
                 </div>
 
                 <h6 class="mt-4 mb-3 pt-2 sidebar-setting">Sidebar Size</h6>
 
                 <div class="form-check sidebar-setting">
-                    <input class="form-check-input" type="radio" name="sidebar-size" id="sidebar-size-default" value="default" onchange="document.body.setAttribute('data-sidebar-size', 'lg')">
+                    <input class="form-check-input" type="radio" name="sidebar-size" id="sidebar-size-default"
+                        value="default" onchange="document.body.setAttribute('data-sidebar-size', 'lg')">
                     <label class="form-check-label" for="sidebar-size-default">Default</label>
                 </div>
                 <div class="form-check sidebar-setting">
-                    <input class="form-check-input" type="radio" name="sidebar-size" id="sidebar-size-compact" value="compact" onchange="document.body.setAttribute('data-sidebar-size', 'md')">
+                    <input class="form-check-input" type="radio" name="sidebar-size" id="sidebar-size-compact"
+                        value="compact" onchange="document.body.setAttribute('data-sidebar-size', 'md')">
                     <label class="form-check-label" for="sidebar-size-compact">Compact</label>
                 </div>
                 <div class="form-check sidebar-setting">
-                    <input class="form-check-input" type="radio" name="sidebar-size" id="sidebar-size-small" value="small" onchange="document.body.setAttribute('data-sidebar-size', 'sm')">
+                    <input class="form-check-input" type="radio" name="sidebar-size" id="sidebar-size-small"
+                        value="small" onchange="document.body.setAttribute('data-sidebar-size', 'sm')">
                     <label class="form-check-label" for="sidebar-size-small">Small (Icon View)</label>
                 </div>
 
                 <h6 class="mt-4 mb-3 pt-2 sidebar-setting">Sidebar Color</h6>
 
                 <div class="form-check sidebar-setting">
-                    <input class="form-check-input" type="radio" name="sidebar-color" id="sidebar-color-light" value="light" onchange="document.body.setAttribute('data-sidebar', 'light')">
+                    <input class="form-check-input" type="radio" name="sidebar-color" id="sidebar-color-light"
+                        value="light" onchange="document.body.setAttribute('data-sidebar', 'light')">
                     <label class="form-check-label" for="sidebar-color-light">Light</label>
                 </div>
                 <div class="form-check sidebar-setting">
-                    <input class="form-check-input" type="radio" name="sidebar-color" id="sidebar-color-dark" value="dark" onchange="document.body.setAttribute('data-sidebar', 'dark')">
+                    <input class="form-check-input" type="radio" name="sidebar-color" id="sidebar-color-dark"
+                        value="dark" onchange="document.body.setAttribute('data-sidebar', 'dark')">
                     <label class="form-check-label" for="sidebar-color-dark">Dark</label>
                 </div>
                 <div class="form-check sidebar-setting">
-                    <input class="form-check-input" type="radio" name="sidebar-color" id="sidebar-color-brand" value="brand" onchange="document.body.setAttribute('data-sidebar', 'brand')">
+                    <input class="form-check-input" type="radio" name="sidebar-color" id="sidebar-color-brand"
+                        value="brand" onchange="document.body.setAttribute('data-sidebar', 'brand')">
                     <label class="form-check-label" for="sidebar-color-brand">Brand</label>
                 </div>
 
                 <h6 class="mt-4 mb-3 pt-2">Direction</h6>
 
                 <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="layout-direction" id="layout-direction-ltr" value="ltr">
+                    <input class="form-check-input" type="radio" name="layout-direction" id="layout-direction-ltr"
+                        value="ltr">
                     <label class="form-check-label" for="layout-direction-ltr">LTR</label>
                 </div>
                 <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="layout-direction" id="layout-direction-rtl" value="rtl">
+                    <input class="form-check-input" type="radio" name="layout-direction" id="layout-direction-rtl"
+                        value="rtl">
                     <label class="form-check-label" for="layout-direction-rtl">RTL</label>
                 </div>
 
@@ -478,7 +516,7 @@
         let baseRoute = '{{ url('') }}';
     </script>
     @if (request()->is('ppic/workOrder') || request()->is('ppic/workOrder/*'))
-    <script src="{{ asset('assets/js/ppic/work_order.js') }}"></script>
+        <script src="{{ asset('assets/js/ppic/work_order.js') }}"></script>
     @endif
     {{-- @endif --}}
 
@@ -491,25 +529,25 @@
         }, 5000);
 
         // Tampilkan SweetAlert2 jika sesuai dengan kondisi
-        @if(session('sweet_error'))
-        Swal.fire({
-            icon: 'error',
-            title: 'Oops...',
-            text: '{{ session('
-            sweet_error ') }}',
-            timer: 3000,
-            showConfirmButton: false
-        });
+        @if (session('sweet_error'))
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: '{{ session('
+                                                                                                            sweet_error ') }}',
+                timer: 3000,
+                showConfirmButton: false
+            });
         @endif
 
-        @if(session('sweet_success'))
-        Swal.fire({
-            title: "Success!",
-            text: "{{ session('sweet_success') }}",
-            icon: "success",
-            timer: 3000,
-            showConfirmButton: false
-        });
+        @if (session('sweet_success'))
+            Swal.fire({
+                title: "Success!",
+                text: "{{ session('sweet_success') }}",
+                icon: "success",
+                timer: 3000,
+                showConfirmButton: false
+            });
         @endif
     </script>
 
