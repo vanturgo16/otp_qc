@@ -6,6 +6,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DataSampleController;
 use App\Http\Controllers\DataWasteController;
 use App\Http\Controllers\GrnController;
+use App\Http\Controllers\HistoryStockFgController;
 use App\Http\Controllers\LptsController;
 use App\Http\Controllers\ProductionController;
 use App\Http\Controllers\qc\CoaController;
@@ -27,23 +28,23 @@ Route::post('auth/login', [AuthController::class, 'postlogin'])->name('postlogin
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::middleware(['auth', 'clear.permission.cache', 'permission:PPIC'])->group(function () {
-    
+
     //Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    
+
     Route::controller(CoaController::class)->middleware('permission:PPIC_Barcode')->group(function () {
         Route::get('/coa', 'index')->name('coa');
         Route::post('/store-coa', 'store')->name('coa.store');
         Route::get('/show-coa/{id}', 'show')->name('show_coa');
-        
+
         Route::get('/print-coa', 'print_coa')->name('print_coa');
     });
-    
+
     Route::controller(HistorystokController::class)->middleware('permission:PPIC_Barcode')->group(function () {
         Route::get('/history-stok', 'index')->name('history-stok');
-        
+
     });
-    
+
     Route::controller(DataSampleController::class)->group(function () {
         Route::prefix('data-sample')->group(function () {
             Route::get('/', 'index')->name('sample.index');
@@ -78,9 +79,18 @@ Route::middleware(['auth', 'clear.permission.cache', 'permission:PPIC'])->group(
             Route::get('/print', [DataWasteController::class, 'print'])->name('data-waste.print');
             Route::get('/export-excel', [DataWasteController::class, 'exportExcel'])->name('data-waste.exportExcel');
             Route::post('/store', [DataWasteController::class, 'storeAddWaste'])->name('data-waste.store');
-        
+
 
         });
     });
 
-}); 
+   Route::controller(HistoryStockFgController::class)->group(function () {
+        Route::prefix('historystock')->group(function () {
+
+            // Halaman index (view)
+            Route::get('/fg', 'index')->name('historystock.fg');
+
+           Route::get('/fg/{hash}', 'show')->name('historystock.fg.show');
+                });
+    });
+});
