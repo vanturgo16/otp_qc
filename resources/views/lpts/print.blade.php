@@ -140,11 +140,11 @@
                     </tr>
                     <tr>
                         <td class="no-border">Jumlah</td>
-                        <td style="border-bottom:1px solid #000;">&nbsp;</td>
+                        <td style="border-bottom:1px solid #000;"><span>{{ $data->qty ?? '-' }}</span></td>
                     </tr>
                     <tr>
                         <td class="no-border">Total Order</td>
-                        <td style="border-bottom:1px solid #000;"><span>{{ $data->qty ?? '-' }}</span></td>
+                        <td style="border-bottom:1px solid #000;"><span>{{ $data->qty_needed ?? '-' }}</span></td>
                     </tr>
                     <tr>
                         <td>% Ketidaksesuaian</td>
@@ -177,11 +177,11 @@
 
             <td class="no-border" style="text-align:center; width:30%;">
                 Dilaporkan,<br><br><br><br><br>
-                ( <span style="display:inline-block; width:80px; "> QC </span> )
+                ( <span style="display:inline-block; width:80px; "> </span> )
             </td>
             <td class="no-border" style="text-align:center; width:30%;">
                 Dilaporkan,<br><br><br><br><br>
-                ( <span style="display:inline-block; width:80px; "> QC </span> )
+                ( <span style="display:inline-block; width:80px; "> </span> )
             </td>
         </tr>
     </table>
@@ -203,7 +203,7 @@
 
             <td class="no-border" style="text-align:center; width:30%;">
                 Dilaporkan,<br><br><br><br><br>
-                ( <span style="display:inline-block; width:80px; "> QC </span> )
+                ( <span style="display:inline-block; width:80px; "> </span> )
             </td>
         </tr>
     </table>
@@ -225,7 +225,7 @@
 
             <td class="no-border" style="text-align:center; width:30%;">
                 Dilaporkan,<br><br><br><br><br>
-                ( <span style="display:inline-block; width:80px; "> QC </span> )
+                ( <span style="display:inline-block; width:80px; "> </span> )
             </td>
         </tr>
     </table>
