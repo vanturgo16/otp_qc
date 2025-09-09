@@ -86,10 +86,8 @@ class HistoryStockSampleController extends Controller
                 hs.id,
                 hs.date,
                 hs.remarks,
-
                 pl.packing_number,
                 pl.status,
-
                 mpf.product_code,
                 mpf.description,
 

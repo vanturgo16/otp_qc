@@ -22,7 +22,6 @@
   <div class="subtitle">PT Olefina Tifaplas Polikemindo</div>
 
   <table class="no-border" style="margin:10px 0 12px 0;">
-   s
     <tr><td>Periode</td><td>: {{ $periodHuman }}</td></tr>
     <tr><td>Stok Awal</td><td>: 0</td></tr>
     <tr><td>Stok Akhir</td><td>: 0</td></tr>

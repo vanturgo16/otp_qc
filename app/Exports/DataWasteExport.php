@@ -14,6 +14,7 @@ class DataWasteExport implements FromView
         $this->datas = $datas;
     }
 
+
     public function view(): View
     {
         return view('data-waste.export_excel', [

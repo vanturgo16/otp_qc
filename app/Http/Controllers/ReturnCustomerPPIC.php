@@ -86,7 +86,7 @@ public function index( Request $request)
     }
 
     $returns = $returns->orderBy('return_customers_ppic.created_at', 'desc')->get();
-     
+
 
     return view('return_customers_ppic.index', compact('dn_details', 'returns'));
 }
@@ -95,7 +95,7 @@ public function index( Request $request)
 public function store(Request $request)
 {
 
-   
+
    $request->validate([
     'id_delivery_note_details' => 'required|integer',
     'id_delivery_notes' => 'required|integer',
@@ -157,8 +157,10 @@ public function printReturn($id_delivery_note_details)
     $dn_number = $datas->first()->dn_number ?? '';
 
     // Generate PDF menggunakan blade print dan kirim data yang dibutuhkan
-    $pdf = Pdf::loadView('return_customers_ppic.print', compact('datas', 'customer', 'tanggal', 'dn_number'));
-    return $pdf->stream('return_customers_ppic.pdf');
+    $pdf = Pdf::loadView('return_customers_ppic.print', compact('datas', 'customer', 'tanggal', 'dn_number'))
+    ->setPaper('a4', 'landscape') ;
+
+   return $pdf->stream('return_customers_ppic.pdf');
 }
 
 public function exportExcel(Request $request)
@@ -227,7 +229,7 @@ public function scrap($id)
             'rcp.qty',
             'dnd.id_sales_orders'
             )->first();
-          
+
     $id_sales_orders = $delivery_detail ? $delivery_detail->id_sales_orders : null;
     $type_product = $delivery_detail ? $delivery_detail->type_product : null;
     $no_report = $delivery_detail ? $delivery_detail->no_report : null;
@@ -247,7 +249,7 @@ public function scrap($id)
             ->first();
         $remark = $history ? $history->remarks : null;
     }
-    
+
 
     $waste_date = request('waste_date') ?? now()->format('Y-m-d');
 
