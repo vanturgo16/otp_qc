@@ -6,7 +6,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DataSampleController;
 use App\Http\Controllers\DataWasteController;
 use App\Http\Controllers\GrnController;
-use App\Http\Controllers\HistoryStockFgController;
+use App\Http\Controllers\HistoryStockSampleController;
 use App\Http\Controllers\LptsController;
 use App\Http\Controllers\ProductionController;
 use App\Http\Controllers\qc\CoaController;
@@ -15,6 +15,7 @@ use App\Http\Controllers\ReturnCustomerPPIC;
 use App\Http\Controllers\user\PermissionController;
 use App\Http\Controllers\user\RoleController;
 use App\Http\Controllers\user\UserController;
+
 
 //PRODUCTION
 use App\Http\Controllers\warehouse\DeliveryNoteController;
@@ -84,13 +85,14 @@ Route::middleware(['auth', 'clear.permission.cache', 'permission:PPIC'])->group(
         });
     });
 
-   Route::controller(HistoryStockFgController::class)->group(function () {
+   Route::controller(HistoryStockSampleController::class)->group(function () {
         Route::prefix('historystock')->group(function () {
-
-            // Halaman index (view)
             Route::get('/fg', 'index')->name('historystock.fg');
+            Route::get('/fg/{hash}', 'show')->name('historystock.fg.show');
+            Route::post('/fg/export', 'export')->name('historystock.fg.export');
 
-           Route::get('/fg/{hash}', 'show')->name('historystock.fg.show');
-                });
+
+
+         });
     });
 });
