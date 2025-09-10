@@ -181,20 +181,20 @@ class LptsController extends Controller
                 'updated_at'
             )->get();
 
-            dump($stock_waste);
+
        $bulanRomawi = $this->toRoman(now()->format('n'));
         $tahun = now()->format('y');
         $urut = 1; // urutan hanya untuk WO yang belum punya LPTS
    foreach ($datas as $row) {
     $lpts = DB::table('lpts')->where('id_wo', $row->work_order_id)->first();
     if ($lpts) {
-        $row->id = $lpts->id; 
+        $row->id = $lpts->id;
         $row->no_lpts = $lpts->no_lpts;
         $row->keterangan = $lpts->keterangan;
         $row->can_print = !empty($lpts->keterangan);
         $row->qc_status = $lpts->qc_status;
     } else {
-        $row->id = null; 
+        $row->id = null;
         $row->no_lpts = "Belum Ada";
         $row->keterangan = null;
         $row->can_print = false;
@@ -272,8 +272,8 @@ class LptsController extends Controller
     return back()->with('pesan', 'Keterangan berhasil disimpan!');
 }
 
- 
-    
+
+
     public function printLpts($work_order_id)
     {
         // Ambil dari lpts
@@ -291,9 +291,9 @@ class LptsController extends Controller
             ->leftJoin('master_units as mu', 'wo.id_master_units', '=', 'mu.id')
             // Join subquery barcode_data
             ->leftJoin(DB::raw('(
-                SELECT barcodes.id_work_orders, GROUP_CONCAT(barcode_number SEPARATOR ", ") as all_barcodes 
-                FROM barcode_detail 
-                LEFT JOIN barcodes ON barcode_detail.id_barcode = barcodes.id 
+                SELECT barcodes.id_work_orders, GROUP_CONCAT(barcode_number SEPARATOR ", ") as all_barcodes
+                FROM barcode_detail
+                LEFT JOIN barcodes ON barcode_detail.id_barcode = barcodes.id
                 GROUP BY barcodes.id_work_orders
             ) as barcode_data'), 'wo.id', '=', 'barcode_data.id_work_orders')
             ->where('wo.id', $work_order_id)
@@ -339,7 +339,7 @@ public function scrap($id)
         ->where('work_orders.id', $lpts->id_wo)
         ->select('work_orders.*', 'mpf.type_product', 'lpts.no_lpts as no_report')
         ->first();
- 
+
     $id_master_products = $wo ? $wo->id_master_products : null;
     $qty = $wo ? $wo->qty : 0;
     $type_product = $wo ? $wo->type_product : null;

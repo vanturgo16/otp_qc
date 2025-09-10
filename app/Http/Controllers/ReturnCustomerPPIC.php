@@ -2,16 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\ReturnCustomerPpicExport;
 use App\Http\Controllers\Controller;
 use App\Models\ReturnCustomersPpic;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use PhpParser\Node\Stmt\Return_;
-use App\Exports\ReturnCustomerPpicExport;
-use Maatwebsite\Excel\Facades\Excel;
 
 use function Laravel\Prompts\select;
+use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
+
+use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
+
 
 class ReturnCustomerPPIC extends Controller
 {
@@ -130,8 +132,15 @@ ReturnCustomersPpic::create([
     return redirect()->route('return-customer-ppic.index')->with('pesan', 'Data return customer berhasil disimpan!');
 }
 
-public function printReturn($id_delivery_note_details)
+public function printReturn($hash)
 {
+
+    try {
+        $id_delivery_note_details = decrypt($hash);
+    } catch (\Exception $e) {
+        return back()->with('error', 'ID Delivery Note Details tidak valid!');
+    }
+   
     // Ambil semua data return customer yang terkait dengan detail DN tertentu
     // Join ke master_customers, sales_orders, master_units, delivery_note_details, dan delivery_notes
     $datas = ReturnCustomersPpic::leftjoin('master_customers as mc', 'return_customers_ppic.id_master_customers', '=', 'mc.id')
@@ -152,12 +161,22 @@ public function printReturn($id_delivery_note_details)
         ->get();
 
     // Ambil data customer, tanggal, dan nomor DN dari data pertama (untuk header laporan)
-    $customer = $datas->first()->customer_name ?? '';
-    $tanggal = $datas->first()->created_at ?? '';
-    $dn_number = $datas->first()->dn_number ?? '';
+        $customer  = $datas->pluck('customer_name')->unique()->implode(', ');
+        $tanggal = $datas->pluck('date_return') // gunakan 'date_return' jika itu field tanggal Anda
+         ->map(function($tgl) {
+        return $tgl ? Carbon::parse($tgl)->format('Y-m-d') : null;
+        })
+        ->filter()
+        ->unique()
+        ->implode(', ');
+        $dn_number = $datas->pluck('dn_number')->unique()->implode(', ');
+
+
+
 
     // Generate PDF menggunakan blade print dan kirim data yang dibutuhkan
-    $pdf = Pdf::loadView('return_customers_ppic.print', compact('datas', 'customer', 'tanggal', 'dn_number'));
+    $pdf = Pdf::loadView('return_customers_ppic.print', compact('datas', 'customer', 'tanggal', 'dn_number'))
+        ->setPaper('a4', 'landscape');
     return $pdf->stream('return_customers_ppic.pdf');
 }
 

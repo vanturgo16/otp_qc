@@ -6,6 +6,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DataSampleController;
 use App\Http\Controllers\DataWasteController;
 use App\Http\Controllers\GrnController;
+use App\Http\Controllers\HistoryStockSampleController;
 use App\Http\Controllers\LptsController;
 use App\Http\Controllers\ProductionController;
 use App\Http\Controllers\qc\CoaController;
@@ -14,6 +15,7 @@ use App\Http\Controllers\ReturnCustomerPPIC;
 use App\Http\Controllers\user\PermissionController;
 use App\Http\Controllers\user\RoleController;
 use App\Http\Controllers\user\UserController;
+
 
 //PRODUCTION
 use App\Http\Controllers\warehouse\DeliveryNoteController;
@@ -27,23 +29,23 @@ Route::post('auth/login', [AuthController::class, 'postlogin'])->name('postlogin
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::middleware(['auth', 'clear.permission.cache', 'permission:PPIC'])->group(function () {
-    
+
     //Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    
+
     Route::controller(CoaController::class)->middleware('permission:PPIC_Barcode')->group(function () {
         Route::get('/coa', 'index')->name('coa');
         Route::post('/store-coa', 'store')->name('coa.store');
         Route::get('/show-coa/{id}', 'show')->name('show_coa');
-        
+
         Route::get('/print-coa', 'print_coa')->name('print_coa');
     });
-    
+
     Route::controller(HistorystokController::class)->middleware('permission:PPIC_Barcode')->group(function () {
         Route::get('/history-stok', 'index')->name('history-stok');
-        
+
     });
-    
+
     Route::controller(DataSampleController::class)->group(function () {
         Route::prefix('data-sample')->group(function () {
             Route::get('/', 'index')->name('sample.index');
@@ -67,7 +69,7 @@ Route::middleware(['auth', 'clear.permission.cache', 'permission:PPIC'])->group(
         Route::prefix('return-customer-ppic')->group(function () {
             Route::get('/', 'index')->name('return-customer-ppic.index');
             Route::post('/store', [ReturnCustomerPPIC::class, 'store'])->name('return-customer-ppic.store');
-            Route::get('/print/{id_delivery_note_details}', [ReturnCustomerPPIC::class, 'printReturn'])->name('return-customer-ppic.print');
+            Route::get('/print/{hash}', [ReturnCustomerPPIC::class, 'printReturn'])->name('return-customer-ppic.print');
             Route::post('/{id}/scrap', [ReturnCustomerPPIC::class, 'scrap'])->name('return-customer-ppic.scrap');
             Route::get('/export-excel', [ReturnCustomerPPIC::class, 'exportExcel'])->name('return-customer-ppic.exportExcel');
         });
@@ -78,9 +80,19 @@ Route::middleware(['auth', 'clear.permission.cache', 'permission:PPIC'])->group(
             Route::get('/print', [DataWasteController::class, 'print'])->name('data-waste.print');
             Route::get('/export-excel', [DataWasteController::class, 'exportExcel'])->name('data-waste.exportExcel');
             Route::post('/store', [DataWasteController::class, 'storeAddWaste'])->name('data-waste.store');
-        
+
 
         });
     });
 
-}); 
+   Route::controller(HistoryStockSampleController::class)->group(function () {
+        Route::prefix('historystock')->group(function () {
+            Route::get('/fg', 'index')->name('historystock.fg');
+            Route::get('/fg/{hash}', 'show')->name('historystock.fg.show');
+            Route::post('/fg/export', 'export')->name('historystock.fg.export');
+
+
+
+         });
+    });
+});

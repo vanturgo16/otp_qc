@@ -337,6 +337,7 @@
                                         <th>Keterangan</th>
                                         <th>Action</th>
 
+
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -354,8 +355,9 @@
                                             <td>{{ $return->qc_status }}</td>
                                             <td>{{ $return->keterangan }}</td>
 
+
                                             <td>
-                                                <a href="{{ route('return-customer-ppic.print', $return->id_delivery_note_details) }}"
+                                                <a href="{{ route('return-customer-ppic.print', encrypt($return->id_delivery_note_details)) }}"
                                                     class="btn btn-primary" target="_blank">Print PDF</a>
 
                                                 @if ($return->qc_status !== 'scrap')
