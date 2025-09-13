@@ -454,7 +454,7 @@ public function rework($id)
 
   // Ambil tanggal rework dari request, default ke hari ini jika tidak ada
     $rework_date = request('rework_date') ?? now()->format('Y-m-d');
-    dd($rework_date);
+
 
     $id_master_products = $lpts->id_master_products;
     // Update qty dan weight di master_product_fgs
