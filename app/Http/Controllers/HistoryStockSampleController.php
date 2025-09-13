@@ -22,7 +22,6 @@ class HistoryStockSampleController extends Controller
             ->leftJoin('sales_orders as so', 'pl.id_sales_orders', '=', 'so.id')
             ->leftJoin('master_product_fgs as mpf', 'so.id_master_products', '=', 'mpf.id')
             ->leftJoin('master_customers as mc', 'so.id_master_customers', '=', 'mc.id')
-            ->where('so.so_type', 'Reguler')
             ->selectRaw("
                 hs.id,
                 hs.id_good_receipt_notes_details,
@@ -54,6 +53,9 @@ class HistoryStockSampleController extends Controller
                 $q->whereBetween(DB::raw('DATE(hs.date)'), [$start, $end]);
             } catch (\Throwable $e) {
                 // ignore invalid month
+                $month = null;
+                $searchDate = 'All';
+                
             }
         }
 

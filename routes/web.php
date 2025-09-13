@@ -70,7 +70,7 @@ Route::middleware(['auth', 'clear.permission.cache', 'permission:PPIC'])->group(
         Route::prefix('return-customer-ppic')->group(function () {
             Route::get('/', 'index')->name('return-customer-ppic.index');
             Route::post('/store', [ReturnCustomerPPIC::class, 'store'])->name('return-customer-ppic.store');
-            Route::get('/print/{id_delivery_note_details}', [ReturnCustomerPPIC::class, 'printReturn'])->name('return-customer-ppic.print');
+            Route::get('/print/{hash}', [ReturnCustomerPPIC::class, 'printReturn'])->name('return-customer-ppic.print');
             Route::post('/{id}/scrap', [ReturnCustomerPPIC::class, 'scrap'])->name('return-customer-ppic.scrap');
             Route::get('/export-excel', [ReturnCustomerPPIC::class, 'exportExcel'])->name('return-customer-ppic.exportExcel');
         });
