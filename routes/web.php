@@ -62,6 +62,7 @@ Route::middleware(['auth', 'clear.permission.cache', 'permission:PPIC'])->group(
             Route::get('/print/{work_order_id}', [LptsController::class, 'printLpts'])->name('lpts.print');
             Route::get('/export-excel', [LptsController::class, 'exportExcel'])->name('lpts.exportExcel');
             Route::post('/{id}/scrap', [LptsController::class, 'scrap'])->name('lpts.scrap');
+            Route::post('/{id}/rework', [LptsController::class, 'rework'])->name('lpts.rework');
         });
     });
 

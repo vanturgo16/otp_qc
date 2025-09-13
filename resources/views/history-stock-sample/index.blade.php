@@ -120,10 +120,14 @@
                                             <option value="-1">All</option>
                                         </select>
                                     </label>
-                                    <button class="btn btn-sm btn-export waves-effect btn-label waves-light"
+
+
+                                    {{-- <button class="btn btn-sm btn-export waves-effect btn-label waves-light"
                                         data-bs-toggle="modal" data-bs-target="#exportModal">
                                         <i class="mdi mdi-export label-icon"></i> Export Data
-                                    </button>
+                                    </button> --}}
+
+
                                     {{-- ====== Modal Export ====== --}}
                                     <div class="modal fade" id="exportModal" data-bs-backdrop="static"
                                         data-bs-keyboard="false" tabindex="-1" aria-hidden="true">

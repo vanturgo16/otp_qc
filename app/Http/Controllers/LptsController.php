@@ -54,7 +54,7 @@ class LptsController extends Controller
             'wo.created_at',
             'wo.status',
             'b.id as barcode_id',
-            'bd.barcode_number',
+            DB::raw('GROUP_CONCAT(DISTINCT bd.barcode_number SEPARATOR ", ") as barcode_number'),
             'pl.packing_number',
             'b.staff',
             'mpf.description',
@@ -63,6 +63,24 @@ class LptsController extends Controller
             'mu.unit',
             'mpf.weight',
             'lpts.qc_status',
+        )
+        ->groupBy(
+            'wo.id',
+            'wo.wo_number',
+            'wo.id_sales_orders',
+            'wo.type_product',
+            'wo.qty',
+            'wo.created_at',
+            'wo.status',
+            'b.id',
+            'pl.packing_number',
+            'b.staff',
+            'mpf.description',
+            'mpf.thickness',
+            'mgs.name',
+            'mu.unit',
+            'mpf.weight',
+            'lpts.qc_status'
         )
         ->get();
 
@@ -161,7 +179,7 @@ class LptsController extends Controller
             'wo.created_at',
             'wo.status',
             'b.id as barcode_id',
-            'bd.barcode_number',
+            DB::raw('GROUP_CONCAT(DISTINCT bd.barcode_number SEPARATOR ", ") as barcode_number'),
             'pl.packing_number',
             'b.staff',
             'mpf.description',
@@ -171,6 +189,25 @@ class LptsController extends Controller
             'mpf.weight',
             'lpts.qc_status',
         )
+        ->groupBy(
+            'wo.id',
+            'wo.wo_number',
+            'wo.id_sales_orders',
+            'wo.type_product',
+            'wo.qty',
+            'wo.created_at',
+            'wo.status',
+            'b.id',
+            'pl.packing_number',
+            'b.staff',
+            'mpf.description',
+            'mpf.thickness',
+            'mgs.name',
+            'mu.unit',
+            'mpf.weight',
+            'lpts.qc_status'
+        )
+        ->limit(50)
         ->get();
 
 
@@ -225,9 +262,17 @@ class LptsController extends Controller
         'keterangan' => 'nullable|string|max:1000',
     ]);
 
-    // Ambil WO
-    $wo = DB::table('work_orders')->where('id', $request->id_wo)->first();
+    // Ambil WO dengan JOIN ke master_product_fgs untuk mendapatkan weight
+    $wo = DB::table('work_orders as wo')
+        ->leftJoin('master_product_fgs as mpf', 'wo.id_master_products', '=', 'mpf.id')
+        ->where('wo.id', $request->id_wo)
+        ->select('wo.id','wo.wo_number','wo.type_product','wo.qty','wo.id_master_products', 'mpf.weight')
+        ->first();
+
     $no_wo = $wo ? $wo->wo_number : null;
+    $type_product = $wo->type_product ?? null;
+    $qty = $wo->qty ?? 0;
+    $weight = $wo->weight ?? 0; // weight dari master_product_fgs
 
     // Ambil id_master_products dari WO
     $id_master_products = $wo->id_master_products ?? null;
@@ -260,7 +305,11 @@ class LptsController extends Controller
             'no_lpts'        => $no_lpts,
             'id_wo'          => $request->id_wo,
             'id_history_stock' => $id_history_stock, // <-- isi dari hasil di atas
-            'no_wo'          => $no_wo,
+            'id_master_products' => $id_master_products,
+              'no_wo'          => $no_wo,
+            'type_product'   => $type_product,
+            'qty'            => $qty,
+            'weight'         => $weight,
             'barcode_number' => $barcode_number_str,
             'keterangan'     => $request->keterangan,
             'qc_status'      => 'checked',
@@ -394,6 +443,60 @@ public function scrap($id)
 
     return back()->with('success', 'Data LPTS berhasil di scrap ke Waste dan QC status diupdate!');
 }
+
+public function rework($id)
+{
+    $lpts = DB::table('lpts')->where('id', $id)->first();
+    if (!$lpts) {
+        return back()->with('error', 'Data LPTS tidak ditemukan!');
+    }
+
+
+  // Ambil tanggal rework dari request, default ke hari ini jika tidak ada
+    $rework_date = request('rework_date') ?? now()->format('Y-m-d');
+    dd($rework_date);
+
+    $id_master_products = $lpts->id_master_products;
+    // Update qty dan weight di master_product_fgs
+    if($id_master_products){
+        $master_product_fgs = DB::table('master_product_fgs')->where('id', $id_master_products)->first();
+
+        if($master_product_fgs) {
+            // Tambahkan qty dan weight dari LPTS ke master_product_fgs
+            DB::table('master_product_fgs')->where('id', $id_master_products)->update([
+                'stock' => ($master_product_fgs->stock ?? 0) + ($lpts->qty ?? 0),
+                'weight' => ($master_product_fgs->weight ?? 0) + ($lpts->weight ?? 0),
+                'updated_at' => now()
+            ]);
+        }
+    }
+
+
+    // Update status QC di LPTS
+    DB::table('lpts')->where('id', $id)->update([
+        'qc_status' => 'rework',
+        'updated_at' => now()
+    ]);
+
+    // Insert ke history_stocks sebagai rework
+    DB::table('history_stocks')->insert([
+        'id_good_receipt_notes_details' => $lpts->no_lpts,
+        'id_master_products' => $lpts->id_master_products,
+        'type_product' => $lpts->type_product,
+        'usage_to' => null,
+        'qty' => $lpts->qty,
+        'weight' => $lpts->weight,
+        'type_stock' => 'RETURN',
+        'barcode' => $lpts->barcode_number,
+        'date' => $rework_date,
+        'remarks' => $lpts->keterangan ? $lpts->keterangan : 'Rework dari LPTS',
+        'created_at' => now(),
+        'updated_at' => now(),
+    ]);
+
+    return back()->with('success', 'Data LPTS berhasil di-rework, QC status diupdate, dan stock master product bertambah!');
+}
+
     private function getUrutanLPTSBaru() {
     // Ambil urutan terbesar dari DB
     $lastNo = DB::table('lpts')
