@@ -337,6 +337,7 @@
                                         <th>Keterangan</th>
                                         <th>Action</th>
 
+
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -354,16 +355,23 @@
                                             <td>{{ $return->qc_status }}</td>
                                             <td>{{ $return->keterangan }}</td>
 
+
                                             <td>
-                                                <a href="{{ route('return-customer-ppic.print', $return->id_delivery_note_details) }}"
+                                                <a href="{{ route('return-customer-ppic.print', encrypt($return->id_delivery_note_details)) }}"
                                                     class="btn btn-primary" target="_blank">Print PDF</a>
 
-                                                @if ($return->qc_status !== 'scrap')
+                                                @if ($return->qc_status !== 'scrap' && $return->qc_status !== 'rework')
                                                     <!-- Tombol Scrap buka modal -->
-                                                    <button type="button" class="btn btn-danger " data-bs-toggle="modal"
+                                                    <button type="button" class="btn btn-danger" data-bs-toggle="modal"
                                                         data-bs-target="#modalScrap{{ $return->id }}">
                                                         Scrap
                                                     </button>
+                                                    <!-- Tombol Rework buka modal -->
+                                                    <button type="button" class="btn btn-warning" data-bs-toggle="modal"
+                                                        data-bs-target="#modalRework{{ $return->id }}">
+                                                        Rework
+                                                    </button>
+
                                                     <!-- Modal Scrap -->
                                                     <div class="modal fade" id="modalScrap{{ $return->id }}"
                                                         tabindex="-1"
@@ -394,6 +402,44 @@
                                                                     <div class="modal-footer">
                                                                         <button type="submit"
                                                                             class="btn btn-danger">Scrap</button>
+                                                                        <button type="button" class="btn btn-secondary"
+                                                                            data-bs-dismiss="modal">Batal</button>
+                                                                    </div>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Modal Rework -->
+                                                    <div class="modal fade" id="modalRework{{ $return->id }}"
+                                                        tabindex="-1"
+                                                        aria-labelledby="modalReworkLabel{{ $return->id }}"
+                                                        aria-hidden="true">
+                                                        <div class="modal-dialog">
+                                                            <form
+                                                                action="{{ route('return-customer-ppic.rework', $return->id) }}"
+                                                                method="POST">
+                                                                @csrf
+                                                                <div class="modal-content">
+                                                                    <div class="modal-header">
+                                                                        <h5 class="modal-title"
+                                                                            id="modalReworkLabel{{ $return->id }}">
+                                                                            Rework Data Return Customer
+                                                                        </h5>
+                                                                        <button type="button" class="btn-close"
+                                                                            data-bs-dismiss="modal"></button>
+                                                                    </div>
+                                                                    <div class="modal-body">
+                                                                        <label for="rework_date{{ $return->id }}">Date
+                                                                            Rework</label>
+                                                                        <input type="date" name="rework_date"
+                                                                            id="rework_date{{ $return->id }}"
+                                                                            class="form-control"
+                                                                            value="{{ now()->format('Y-m-d') }}" required>
+                                                                    </div>
+                                                                    <div class="modal-footer">
+                                                                        <button type="submit"
+                                                                            class="btn btn-warning">Rework</button>
                                                                         <button type="button" class="btn btn-secondary"
                                                                             data-bs-dismiss="modal">Batal</button>
                                                                     </div>

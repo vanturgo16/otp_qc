@@ -185,7 +185,7 @@ class DataWasteController extends Controller
                 'updated_at'
             )->get();
 
-         
+
 
     // === data bantu untuk view ===
     $typeProducts = DB::table('master_product_fgs')
@@ -562,7 +562,7 @@ public function print(Request $request)
         'remark'             => $request->remark,
         'waste_date'         => Carbon::parse($request->waste_date)->format('Y-m-d'),
         'weight'             => $qty,
-        'type_stock'         => 'OUT',                  
+        'type_stock'         => 'OUT',
         'type_product'       => $request->type_product,
         'created_at'         => now(),
         'updated_at'         => now(),

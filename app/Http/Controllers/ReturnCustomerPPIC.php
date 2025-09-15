@@ -2,16 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\ReturnCustomerPpicExport;
 use App\Http\Controllers\Controller;
 use App\Models\ReturnCustomersPpic;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use PhpParser\Node\Stmt\Return_;
-use App\Exports\ReturnCustomerPpicExport;
-use Maatwebsite\Excel\Facades\Excel;
 
 use function Laravel\Prompts\select;
+use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
+
+use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
+
 
 class ReturnCustomerPPIC extends Controller
 {
@@ -86,7 +88,7 @@ public function index( Request $request)
     }
 
     $returns = $returns->orderBy('return_customers_ppic.created_at', 'desc')->get();
-     
+
 
     return view('return_customers_ppic.index', compact('dn_details', 'returns'));
 }
@@ -95,7 +97,6 @@ public function index( Request $request)
 public function store(Request $request)
 {
 
-   
    $request->validate([
     'id_delivery_note_details' => 'required|integer',
     'id_delivery_notes' => 'required|integer',
@@ -110,6 +111,20 @@ public function store(Request $request)
     'keterangan' => 'nullable|string',
 ]);
 
+// Ambil type_product dari delivery_note_details dan id_master_products dari sales_orders
+$delivery_detail = DB::table('delivery_note_details as dnd')
+    ->leftJoin('sales_orders as so', 'dnd.id_sales_orders', '=', 'so.id')
+    ->leftJoin('master_product_fgs as mpf', 'so.id_master_products', '=', 'mpf.id')
+    ->where('dnd.id', $request->id_delivery_note_details)
+    ->select(
+        'mpf.type_product',
+        'so.id_master_products',
+
+    )->first();
+
+$type_product = $delivery_detail->type_product ?? null;
+$id_master_products = $delivery_detail->id_master_products ?? null;
+
 ReturnCustomersPpic::create([
     'id_delivery_note_details' => $request->id_delivery_note_details,
     'id_delivery_notes' => $request->id_delivery_notes,
@@ -123,15 +138,22 @@ ReturnCustomersPpic::create([
     'weight' => $request->berat,
     'keterangan' => $request->keterangan,
     'qc_status' => 'checked',
+    'type_product' => $type_product, // Tambahkan kolom baru dari dn_details
+    'id_master_products' => $id_master_products, // Tambahkan kolom baru dari sales_orders
     'created_at' => now(),
     'updated_at' => now(),
 ]);
 
     return redirect()->route('return-customer-ppic.index')->with('pesan', 'Data return customer berhasil disimpan!');
-}
-
-public function printReturn($id_delivery_note_details)
+}public function printReturn($hash)
 {
+
+    try {
+        $id_delivery_note_details = decrypt($hash);
+    } catch (\Exception $e) {
+        return back()->with('error', 'ID Delivery Note Details tidak valid!');
+    }
+
     // Ambil semua data return customer yang terkait dengan detail DN tertentu
     // Join ke master_customers, sales_orders, master_units, delivery_note_details, dan delivery_notes
     $datas = ReturnCustomersPpic::leftjoin('master_customers as mc', 'return_customers_ppic.id_master_customers', '=', 'mc.id')
@@ -152,12 +174,22 @@ public function printReturn($id_delivery_note_details)
         ->get();
 
     // Ambil data customer, tanggal, dan nomor DN dari data pertama (untuk header laporan)
-    $customer = $datas->first()->customer_name ?? '';
-    $tanggal = $datas->first()->created_at ?? '';
-    $dn_number = $datas->first()->dn_number ?? '';
+        $customer  = $datas->pluck('customer_name')->unique()->implode(', ');
+        $tanggal = $datas->pluck('date_return') // gunakan 'date_return' jika itu field tanggal Anda
+         ->map(function($tgl) {
+        return $tgl ? Carbon::parse($tgl)->format('Y-m-d') : null;
+        })
+        ->filter()
+        ->unique()
+        ->implode(', ');
+        $dn_number = $datas->pluck('dn_number')->unique()->implode(', ');
+
+
+
 
     // Generate PDF menggunakan blade print dan kirim data yang dibutuhkan
-    $pdf = Pdf::loadView('return_customers_ppic.print', compact('datas', 'customer', 'tanggal', 'dn_number'));
+    $pdf = Pdf::loadView('return_customers_ppic.print', compact('datas', 'customer', 'tanggal', 'dn_number'))
+        ->setPaper('a4', 'landscape');
     return $pdf->stream('return_customers_ppic.pdf');
 }
 
@@ -216,29 +248,19 @@ public function scrap($id)
         return back()->with('error', 'Data Return Customer tidak ditemukan!');
     }
 
+    // Ambil type_product dan id_master_products langsung dari return_customers_ppic
+    $type_product = $return->type_product;
+    $id_master_products = $return->id_master_products;
+    $qty = $return->qty;
+
+    // Ambil no_report dari delivery note
     $delivery_detail = DB::table('delivery_note_details as dnd')
-    ->leftjoin('sales_orders as so', 'dnd.id_sales_orders', '=', 'so.id')
-    ->leftJoin('master_product_fgs as mpf', 'so.id_master_products', '=', 'mpf.id')
-    ->leftJoin('delivery_notes as dn', 'dnd.id_delivery_notes', '=', 'dn.id')
-    ->leftJoin('return_customers_ppic as rcp', 'dnd.id', '=', 'rcp.id_delivery_note_details')
-    ->where('dnd.id', $return->id_delivery_note_details)
-    ->select('dn.dn_number as no_report',
-            'mpf.type_product as type_product',
-            'rcp.qty',
-            'dnd.id_sales_orders'
-            )->first();
-          
-    $id_sales_orders = $delivery_detail ? $delivery_detail->id_sales_orders : null;
-    $type_product = $delivery_detail ? $delivery_detail->type_product : null;
-    $no_report = $delivery_detail ? $delivery_detail->no_report : null;
-    $qty = $delivery_detail ? $delivery_detail->qty : null;
+        ->leftJoin('delivery_notes as dn', 'dnd.id_delivery_notes', '=', 'dn.id')
+        ->where('dnd.id', $return->id_delivery_note_details)
+        ->select('dn.dn_number as no_report')
+        ->first();
 
-    $id_master_products = null;
-    if ($id_sales_orders) {
-        $sales_order = DB::table('sales_orders')->where('id', $id_sales_orders)->first();
-        $id_master_products = $sales_order ? $sales_order->id_master_products : null;
-    }
-
+        $no_report = $delivery_detail->no_report ?? null;
     $remark = null;
     if ($id_master_products) {
         $history = DB::table('history_stocks')
@@ -247,7 +269,6 @@ public function scrap($id)
             ->first();
         $remark = $history ? $history->remarks : null;
     }
-    
 
     $waste_date = request('waste_date') ?? now()->format('Y-m-d');
 
@@ -290,6 +311,68 @@ public function scrap($id)
     ]);
 
     return back()->with('success', 'Data Return Customer berhasil di scrap ke Waste dan QC status diupdate!');
+}
+
+public function rework($id)
+{
+    $return = DB::table('return_customers_ppic')->where('id', $id)->first();
+    if (!$return) {
+        return back()->with('error', 'Data Return Customer tidak ditemukan!');
+    }
+
+    // Ambil type_product dan id_master_products langsung dari return_customers_ppic
+    $type_product = $return->type_product;
+    $id_master_products = $return->id_master_products;
+
+    // Ambil no_report dari delivery note untuk history
+    $delivery_detail = DB::table('delivery_note_details as dnd')
+        ->leftJoin('delivery_notes as dn', 'dnd.id_delivery_notes', '=', 'dn.id')
+        ->where('dnd.id', $return->id_delivery_note_details)
+        ->select('dn.dn_number as no_report')
+        ->first();
+
+    $no_report = $delivery_detail->no_report ?? null;
+
+    // Update qty dan weight di master_product_fgs jika ada id_master_products
+    if($id_master_products){
+        $master_product_fgs = DB::table('master_product_fgs')->where('id', $id_master_products)->first();
+
+        if($master_product_fgs) {
+            // Tambahkan qty dan weight dari return customer ke master_product_fgs
+            DB::table('master_product_fgs')->where('id', $id_master_products)->update([
+                'stock' => ($master_product_fgs->stock ?? 0) + ($return->qty ?? 0),
+                'weight' => ($master_product_fgs->weight ?? 0) + ($return->weight ?? 0),
+                'updated_at' => now()
+            ]);
+        }
+    }
+
+    // Ambil tanggal rework dari request, default ke hari ini jika tidak ada
+    $rework_date = request('rework_date') ?? now()->format('Y-m-d');
+
+    // Update status QC di return_customers_ppic
+    DB::table('return_customers_ppic')->where('id', $id)->update([
+        'qc_status' => 'rework',
+        'updated_at' => now()
+    ]);
+
+    // Insert ke history_stocks sebagai rework
+    DB::table('history_stocks')->insert([
+        'id_good_receipt_notes_details' => $no_report,
+        'id_master_products' => $id_master_products,
+        'type_product' => $type_product,
+        'usage_to' => null,
+        'qty' => $return->qty,
+        'weight' => $return->weight,
+        'type_stock' => 'RETURN',
+        'barcode' => null, // Return customer tidak punya barcode
+        'date' => $rework_date,
+        'remarks' => $return->keterangan ? $return->keterangan : 'Rework dari Return Customer',
+        'created_at' => now(),
+        'updated_at' => now(),
+    ]);
+
+    return back()->with('success', 'Data Return Customer berhasil di-rework, QC status diupdate, dan stock master product bertambah!');
 }
 }
 
