@@ -236,15 +236,23 @@
                                                     </a>
                                                 @endif
 
-                                                {{-- Tombol Scrap hanya muncul jika $data->id ADA --}}
+                                                {{-- Tombol Scrap dan Rework hanya muncul jika $data->id ADA dan belum di scrap/rework --}}
                                                 @if (!empty($data->id))
-                                                    @if ($data->qc_status !== 'scrap')
+                                                    @if ($data->qc_status === 'checked')
                                                         <!-- Tombol Scrap buka modal -->
                                                         <button type="button" class="btn btn-danger btn-sm"
                                                             data-bs-toggle="modal"
                                                             data-bs-target="#modalScrap{{ $data->id }}">
                                                             Scrap
                                                         </button>
+
+                                                        <!-- Tombol Rework buka modal -->
+                                                        <button type="button" class="btn btn-warning btn-sm"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#modalRework{{ $data->id }}">
+                                                            Rework
+                                                        </button>
+
                                                         <!-- Modal Scrap -->
                                                         <div class="modal fade" id="modalScrap{{ $data->id }}"
                                                             tabindex="-1"
@@ -284,8 +292,52 @@
                                                                 </form>
                                                             </div>
                                                         </div>
+
+                                                        <!-- Modal Rework -->
+                                                        <div class="modal fade" id="modalRework{{ $data->id }}"
+                                                            tabindex="-1"
+                                                            aria-labelledby="modalReworkLabel{{ $data->id }}"
+                                                            aria-hidden="true">
+                                                            <div class="modal-dialog">
+                                                                <form action="{{ route('lpts.rework', $data->id) }}"
+                                                                    method="POST">
+                                                                    @csrf
+                                                                    <div class="modal-content">
+                                                                        <div class="modal-header">
+                                                                            <h5 class="modal-title"
+                                                                                id="modalReworkLabel{{ $data->id }}">
+                                                                                Rework Data LPTS
+                                                                            </h5>
+                                                                            <button type="button" class="btn-close"
+                                                                                data-bs-dismiss="modal"></button>
+                                                                        </div>
+                                                                        <div class="modal-body">
+                                                                            <label
+                                                                                for="rework_date{{ $data->id }}">Tanggal
+                                                                                Rework</label>
+                                                                            <input type="date" name="rework_date"
+                                                                                id="rework_date{{ $data->id }}"
+                                                                                class="form-control"
+                                                                                value="{{ now()->format('Y-m-d') }}"
+                                                                                required>
+                                                                        </div>
+                                                                        <div class="modal-footer">
+                                                                            <button type="submit"
+                                                                                class="btn btn-warning">Rework</button>
+                                                                            <button type="button"
+                                                                                class="btn btn-secondary"
+                                                                                data-bs-dismiss="modal">Batal</button>
+                                                                        </div>
+                                                                    </div>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    @elseif ($data->qc_status === 'scrap')
+                                                        <span class="badge bg-danger text-white">Sudah Scrap</span>
+                                                    @elseif ($data->qc_status === 'rework')
+                                                        <span class="badge bg-warning text-white">Sudah Rework</span>
                                                     @else
-                                                        <span class="badge bg-success">Sudah Scrap</span>
+                                                        <span class="badge bg-secondary text-white">{{ $data->qc_status ?? 'Belum Ada Status' }}</span>
                                                     @endif
                                                 @endif
                                             </td>

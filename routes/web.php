@@ -62,6 +62,7 @@ Route::middleware(['auth', 'clear.permission.cache', 'permission:PPIC'])->group(
             Route::get('/print/{work_order_id}', [LptsController::class, 'printLpts'])->name('lpts.print');
             Route::get('/export-excel', [LptsController::class, 'exportExcel'])->name('lpts.exportExcel');
             Route::post('/{id}/scrap', [LptsController::class, 'scrap'])->name('lpts.scrap');
+            Route::post('/{id}/rework', [LptsController::class, 'rework'])->name('lpts.rework');
         });
     });
 
@@ -71,6 +72,7 @@ Route::middleware(['auth', 'clear.permission.cache', 'permission:PPIC'])->group(
             Route::post('/store', [ReturnCustomerPPIC::class, 'store'])->name('return-customer-ppic.store');
             Route::get('/print/{hash}', [ReturnCustomerPPIC::class, 'printReturn'])->name('return-customer-ppic.print');
             Route::post('/{id}/scrap', [ReturnCustomerPPIC::class, 'scrap'])->name('return-customer-ppic.scrap');
+            Route::post('/{id}/rework', [ReturnCustomerPPIC::class, 'rework'])->name('return-customer-ppic.rework');
             Route::get('/export-excel', [ReturnCustomerPPIC::class, 'exportExcel'])->name('return-customer-ppic.exportExcel');
         });
     });

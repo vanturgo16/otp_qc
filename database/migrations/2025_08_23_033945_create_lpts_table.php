@@ -12,11 +12,17 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('lpts', function (Blueprint $table) {
-          $table->id();
+    $table->id();
     $table->string('no_lpts');
     $table->unsignedBigInteger('id_wo');
-     $table->string('no_wo');
-     $table->string('barcode_number');
+    $table->unsignedBigInteger('id_history_stock')->nullable();
+    $table->unsignedBigInteger('id_master_products')->nullable();
+    $table->string('no_wo');
+    $table->string('type_product')->nullable();
+    $table->integer('qty')->default(0);
+    $table->integer('weight')->default(0);
+    $table->string('barcode_number');
+    $table->string('qc_status')->default('checked');
     $table->text('keterangan')->nullable();
     $table->string('created_by')->nullable();
     $table->timestamps(); // created_at & updated_at otomatis
