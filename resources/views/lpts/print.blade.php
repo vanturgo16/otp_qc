@@ -95,7 +95,7 @@
                     </tr>
                     <tr>
                         <td>Nama Produk</td>
-                        <td style="border-bottom:1px solid #000;">: <span>{{ $data->description ?? '-' }}</span></td>
+                        <td style="border-bottom:1px solid #000;">: <span>{{ $data->product_code ?? '-' }}</span></td>
                     </tr>
                     <tr>
                         <td>No. WO</td>
@@ -136,7 +136,7 @@
                 <table>
                     <tr>
                         <td class="label no-border">Ukuran</td>
-                        <td style="border-bottom:1px solid #000;"></td>
+                        <td style="border-bottom:1px solid #000;"><span>{{ $data->description ?? '-' }}</span></td>
                     </tr>
                     <tr>
                         <td class="no-border">Jumlah</td>

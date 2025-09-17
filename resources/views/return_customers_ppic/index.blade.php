@@ -447,6 +447,14 @@
                                                             </form>
                                                         </div>
                                                     </div>
+
+                                                      @elseif ($data->qc_status === 'scrap')
+                                                        <span class="badge bg-danger text-white">Sudah Scrap</span>
+                                                    @elseif ($data->qc_status === 'rework')
+                                                        <span class="badge bg-warning text-white">Sudah Rework</span>
+                                                    @else
+                                                        <span class="badge bg-secondary text-white">{{ $data->qc_status ?? 'Belum Ada Status' }}</span>
+                                                    @endif
                                                 @endif
                                             </td>
                                         </tr>
