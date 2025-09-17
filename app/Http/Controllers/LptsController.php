@@ -356,6 +356,7 @@ class LptsController extends Controller
                 'wo.created_at',
                 'wo.status',
                 'pl.packing_number',
+                'mpf.product_code',
                 'mpf.description',
                 'mpf.thickness',
                 'mgs.name as group_sub_name',
@@ -370,7 +371,7 @@ class LptsController extends Controller
         // Tambahkan format tanggal jika perlu print
         $data->created_at_formatted = $this->formatTanggal($data->created_at);
 
-        $pdf = Pdf::loadView('LPTS.print', ['data' => $data]);
+        $pdf = Pdf::loadView('lpts.print', ['data' => $data]);
         return $pdf->stream('LPTS.pdf');
     }
 
