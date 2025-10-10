@@ -228,15 +228,14 @@
                                                     </div>
                                                 @endif
                                             </td>
-                                            <td>
-                                                @if ($data->can_print)
-                                                    <a href="{{ route('lpts.print', $data->work_order_id) }}"
-                                                        class="btn btn-sm btn-primary" target="_blank">
-                                                        Print PDF
-                                                    </a>
-                                                @endif
-
-                                                {{-- Tombol Scrap dan Rework hanya muncul jika $data->id ADA dan belum di scrap/rework --}}
+                            <td>
+                                {{-- Tombol Print hanya muncul jika sudah di-scrap atau rework --}}
+                                @if (!empty($data->id) && ($data->qc_status === 'scrap' || $data->qc_status === 'rework'))
+                                    <a href="{{ route('lpts.print', $data->work_order_id) }}"
+                                        class="btn btn-sm btn-primary" target="_blank">
+                                        Print PDF
+                                    </a>
+                                @endif                                                {{-- Tombol Scrap dan Rework hanya muncul jika $data->id ADA dan belum di scrap/rework --}}
                                                 @if (!empty($data->id))
                                                     @if ($data->qc_status === 'checked')
                                                         <!-- Tombol Scrap buka modal -->

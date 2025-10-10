@@ -59,6 +59,21 @@
             vertical-align: middle;
             background: #fff;
         }
+
+        .checkbox.checked {
+
+            position: relative;
+        }
+
+        .checkbox.checked:after {
+            content: 'X';
+            color: black;
+            font-weight: bold;
+            position: absolute;
+            top:0px;
+            left: 5px;
+            font-size: 14px;
+        }
     </style>
 </head>
 
@@ -168,8 +183,8 @@
                 Disposisi :<br>
                 <div style="margin-top:6px;">
                     <span class="checkbox"></span> Repair ( Perbaikan )<br>
-                    <span class="checkbox"></span> Rework ( Produksi Ulang )<br>
-                    <span class="checkbox"></span> Scrap ( Hancurkan )<br>
+                    <span class="checkbox {{ ($data->qc_status ?? '') === 'rework' ? 'checked' : '' }}"></span> Rework ( Produksi Ulang )<br>
+                    <span class="checkbox {{ ($data->qc_status ?? '') === 'scrap' ? 'checked' : '' }}"></span> Scrap ( Hancurkan )<br>
                     <span class="checkbox"></span> ....................................
                 </div>
             </td>
