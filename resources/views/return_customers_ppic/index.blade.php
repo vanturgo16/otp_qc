@@ -340,6 +340,7 @@
 
                                     </tr>
                                 </thead>
+                                <!-- filepath: e:\Projek_Qc\otp_qc\resources\views\return_customers_ppic\index.blade.php -->
                                 <tbody>
                                     @foreach ($returns as $return)
                                         <tr>
@@ -354,20 +355,20 @@
                                             <td>{{ $return->weight }}</td>
                                             <td>{{ $return->qc_status }}</td>
                                             <td>{{ $return->keterangan }}</td>
-
-
                                             <td>
                                                 <a href="{{ route('return-customer-ppic.print', encrypt($return->id_delivery_note_details)) }}"
-                                                    class="btn btn-primary" target="_blank">Print PDF</a>
+                                                    class="btn btn-primary btn-sm" target="_blank">Print PDF</a>
 
                                                 @if ($return->qc_status !== 'scrap' && $return->qc_status !== 'rework')
-                                                    <!-- Tombol Scrap buka modal -->
-                                                    <button type="button" class="btn btn-danger" data-bs-toggle="modal"
+                                                    <!-- Tombol Scrap -->
+                                                    <button type="button" class="btn btn-danger btn-sm"
+                                                        data-bs-toggle="modal"
                                                         data-bs-target="#modalScrap{{ $return->id }}">
                                                         Scrap
                                                     </button>
-                                                    <!-- Tombol Rework buka modal -->
-                                                    <button type="button" class="btn btn-warning" data-bs-toggle="modal"
+                                                    <!-- Tombol Rework -->
+                                                    <button type="button" class="btn btn-warning btn-sm"
+                                                        data-bs-toggle="modal"
                                                         data-bs-target="#modalRework{{ $return->id }}">
                                                         Rework
                                                     </button>
@@ -447,14 +448,13 @@
                                                             </form>
                                                         </div>
                                                     </div>
-
-                                                      @elseif ($data->qc_status === 'scrap')
-                                                        <span class="badge bg-danger text-white">Sudah Scrap</span>
-                                                    @elseif ($data->qc_status === 'rework')
-                                                        <span class="badge bg-warning text-white">Sudah Rework</span>
-                                                    @else
-                                                        <span class="badge bg-secondary text-white">{{ $data->qc_status ?? 'Belum Ada Status' }}</span>
-                                                    @endif
+                                                @elseif ($return->qc_status === 'scrap')
+                                                    <span class="badge bg-danger text-white">Sudah Scrap</span>
+                                                @elseif ($return->qc_status === 'rework')
+                                                    <span class="badge bg-warning text-white">Sudah Rework</span>
+                                                @else
+                                                    <span
+                                                        class="badge bg-secondary text-white">{{ $return->qc_status ?? 'Belum Ada Status' }}</span>
                                                 @endif
                                             </td>
                                         </tr>

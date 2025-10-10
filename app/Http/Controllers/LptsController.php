@@ -249,7 +249,7 @@ class LptsController extends Controller
         if ($request->filled('type_product')) {
             $datas = $datas->filter(function($item) use ($request) {
                 return stripos($item->type_product, $request->type_product) !== false;
-            })->values();
+            })->values();    
         }
         return view('lpts.index', compact('datas'));
     }
