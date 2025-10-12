@@ -68,13 +68,18 @@
         }
 
         .checkbox.checked:after {
-            content: 'X';
-            color: black;
-            font-weight: bold;
+            content: '';
             position: absolute;
+            left: 7px;
             top: 0px;
-            left: 5px;
-            font-size: 14px;
+            width: 5px;
+            height: 10px;
+            border: solid #000;
+            border-width: 0 2px 2px 0;
+            -webkit-transform: rotate(45deg);
+            -moz-transform: rotate(45deg);
+            -o-transform: rotate(45deg);
+            transform: rotate(45deg);
         }
     </style>
 </head>
@@ -238,10 +243,10 @@
             <td class="no-border" style=" vertical-align:top; ">
                 Distribusi :<br>
                 <div style="margin-top:6px;">
-                    <span class="checkbox"></span> Purchasing <br>
-                    <span class="checkbox"></span> Warehouse<br>
-                    <span class="checkbox"></span> QC<br>
-                    <span class="checkbox"></span> Management<br>
+                    <span class="checkbox"></span> PPIC <br>
+                    <span class="checkbox"></span> Pembelian<br>
+                    <span class="checkbox"></span> QA<br>
+                    <span class="checkbox"></span> PROD<br>
 
                 </div>
             </td>

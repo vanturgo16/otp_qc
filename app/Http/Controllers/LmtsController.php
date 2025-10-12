@@ -416,11 +416,7 @@ class LmtsController extends Controller
     // Ambil data tambahan dari tabel referensi
     $data = DB::table('lmts')
         ->leftJoin('good_receipt_notes as grn', 'lmts.id_good_receipt_notes', '=', 'grn.id')
-        ->leftJoin('good_receipt_note_details as grnd', 'lmts.id_good_receipt_notes_details', '=', 'grnd.id')
-        ->leftJoin('master_product_fgs as mpf', 'lmts.id_master_products', '=', 'mpf.id')
         ->leftJoin('master_suppliers as ms', 'grn.id_master_suppliers', '=', 'ms.id')
-        ->leftJoin('master_units as mu', 'mpf.id_master_units', '=', 'mu.id')
-        ->where('lmts.id', $id)
         ->select(
             'lmts.*',
             'ms.name as supplier_name',
