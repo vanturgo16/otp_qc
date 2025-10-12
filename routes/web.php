@@ -74,7 +74,9 @@ Route::middleware(['auth', 'clear.permission.cache', 'permission:PPIC'])->group(
             Route::get('/export-excel', 'exportExcel')->name('lmts.export.excel');
             Route::post('/{id}/scrap', 'scrap')->name('lmts.scrap');
             Route::post('/{id}/return', 'return')->name('lmts.return');
+            Route::post('/{id}/repair', 'repair')->name('lmts.repair');
             Route::post('/{id}/unposted', 'unposted')->name('lmts.unposted')->middleware('role:Super Admin');
+            Route::get('/{id}/print', 'printLmts')->name('lmts.print');
             // Future actions: store, rework, print
         });
     });
