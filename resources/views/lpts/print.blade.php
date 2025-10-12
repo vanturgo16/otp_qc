@@ -61,18 +61,22 @@
         }
 
         .checkbox.checked {
-
             position: relative;
         }
 
         .checkbox.checked:after {
-            content: 'X';
-            color: black;
-            font-weight: bold;
+            content: '';
             position: absolute;
-            top:0px;
-            left: 5px;
-            font-size: 14px;
+            left: 7px;
+            top: 0px;
+            width: 5px;
+            height: 10px;
+            border: solid #000;
+            border-width: 0 2px 2px 0;
+            -webkit-transform: rotate(45deg);
+            -moz-transform: rotate(45deg);
+            -o-transform: rotate(45deg);
+            transform: rotate(45deg);
         }
     </style>
 </head>
