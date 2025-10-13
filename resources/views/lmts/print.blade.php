@@ -1,9 +1,12 @@
+@php
+    // filepath: e:\Projek_Qc\otp_qc\resources\views\lmts\print.blade.php
+@endphp
 <!DOCTYPE html>
 <html>
 
 <head>
     <meta charset="utf-8">
-    <title>LPTS</title>
+    <title>LMTS - {{ $data->no_lmts }}</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -89,95 +92,65 @@
                 <img src="{{ public_path('assets/images/icon-otp.png') }}" style="width:80px;">
             </td>
             <td class="border" style="text-align:center;">
-                <div class="title">LAPORAN PRODUK TIDAK SESUAI ( LPTS )</div>
-                <div class="rev">FM-SM-QD-02, Rev. 1, 01 Juli 2022</div>
+                <div class="title">LAPORAN MATERIAL TESTING & STOCK ( LMTS )</div>
+                <div class="rev">FM-QC-LMTS-01, Rev. 1, {{ now()->format('d F Y') }}</div>
             </td>
         </tr>
     </table>
 
-    <!-- IDENTITAS PRODUK -->
+    <!-- IDENTITAS MATERIAL -->
     <table class="border" style="margin-top:5px;">
         <tr>
-            <td style="width:25%; padding:6px;">Identitas Produk :</td>
+            <td style="width:25%; padding:6px;">Identitas Material :</td>
             <td style="padding:6px;">
                 <table style="width:100%;">
                     <tr class="border" style="margin-bottom: 4px;">
-                        <td style="width:16%; height:34px; font-weight:bold; font-size:18px;">No. Urut</td>
+                        <td style="width:16%; height:34px; font-weight:bold; font-size:18px;">No. LMTS</td>
                         <td style="border-bottom:1px solid #000; font-weight:bold; font-size:18px;">
-                            :{{ $data->no_lpts ?? '-' }}</td>
+                            :{{ $data->no_lmts ?? '-' }}</td>
                     </tr>
                     <tr>
                         <td>Tanggal</td>
                         <td style="border-bottom:1px solid #000;">:
-                            <span>{{ $data->created_at_formatted ?? '-' }}</span>
+                            <span>{{ \Carbon\Carbon::parse($data->date)->format('d-m-Y') ?? '-' }}</span>
                         </td>
                     </tr>
                     <tr>
-                        <td>Nama Produk</td>
-                        <td style="border-bottom:1px solid #000;">: <span>{{ $data->product_code ?? '-' }}</span></td>
+                        <td>Supplier</td>
+                        <td style="border-bottom:1px solid #000;">: <span>{{ $data->supplier_name ?? '-' }}</span></td>
                     </tr>
                     <tr>
-                        <td>No. WO</td>
-                        <td style="border-bottom:1px solid #000;">: <span>{{ $data->wo_number ?? '-' }}</span></td>
+                        <td>Jenis Material</td>
+                        <td style="border-bottom:1px solid #000;">: <span>{{ $data->type_product ?? '-' }}</span>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>Ukuran</td>
+                        <td style="border-bottom:1px solid #000;">: <span>{{ $data->description ?? '-' }}</span></td>
                     </tr>
                     <tr>
-                        <td>No. Roll</td>
-                        <td style="border-bottom:1px solid #000;">: <span>{{ $data->barcode_numbers ?? '-' }}</span>
+                        <td>Quantity</td>
+                        <td style="border-bottom:1px solid #000;">:
+                            <span>{{ number_format($data->qty, 2) ?? '-' }}</span>
                         </td>
                     </tr>
                     <tr>
-                        <td>Diproses</td>
-                        <td style="border-bottom:1px solid #000;">: <span>{{ $data->packing_number ?? '-' }}</span></td>
+                        <td>No. Lot/Batch</td>
+                        <td style="border-bottom:1px solid #000;">: <span>{{ $data->lot_number ?? '-' }}</span></td>
                     </tr>
+                    <tr>
+                        <td>Ketidaksesuaian</td>
+                        <td style="border-bottom:1px solid #000;">: <span>{{ $data->lmts_notes ?? '-' }}</span>
+                        </td>
+                    </tr>
+
                 </table>
             </td>
         </tr>
-        <tr>
-            <td style="padding:6px; border-top:1px solid #000;">Ketidaksesuaian</td>
-            <td style="padding:6px; border-top:1px solid #000;">
-                @if ($data->keterangan)
-                    :<span style="margin-left: 3px">{{ $data->keterangan }}</span>
-                @else
-                    <div class="line"></div>
-                    <div class="line"></div>
-                    <div class="line"></div>
-                @endif
 
-            </td>
-        </tr>
     </table>
 
-    <!-- UKURAN -->
-    <table class="border" style="margin-top:5px;  width:100%;">
-        <tr>
-
-            <td style="padding: 6px;">
-                <table>
-                    <tr>
-                        <td class="label no-border">Ukuran</td>
-                        <td style="border-bottom:1px solid #000;"><span>{{ $data->description ?? '-' }}</span></td>
-                    </tr>
-                    <tr>
-                        <td class="no-border">Jumlah</td>
-                        <td style="border-bottom:1px solid #000;"><span>{{ $data->qty ?? '-' }}</span></td>
-                    </tr>
-                    <tr>
-                        <td class="no-border">Total Order</td>
-                        <td style="border-bottom:1px solid #000;"><span>{{ $data->qty_needed ?? '-' }}</span></td>
-                    </tr>
-                    <tr>
-                        <td>% Ketidaksesuaian</td>
-                        <td style="border-bottom:1px solid #000;">&nbsp;</td>
-                    </tr>
-                </table>
-            </td>
-
-            <td class="no-border" style="text-align:center; width:30%;">
-                Dilaporkan,<br><br><br><br><br>
-                ( <span style="display:inline-block; width:80px; "> QC </span> )
-            </td>
-        </tr>
-    </table>
 
     <!-- DISPOSISI -->
     <table class="border" style="margin-top:5px; width:100%;">
@@ -186,20 +159,23 @@
             <td class="no-border" style=" vertical-align:top; ">
                 Disposisi :<br>
                 <div style="margin-top:6px;">
-                    <span class="checkbox"></span> Repair ( Perbaikan )<br>
-                    <span class="checkbox {{ ($data->qc_status ?? '') === 'rework' ? 'checked' : '' }}"></span> Rework ( Produksi Ulang )<br>
-                    <span class="checkbox {{ ($data->qc_status ?? '') === 'scrap' ? 'checked' : '' }}"></span> Scrap ( Hancurkan )<br>
+                    <span class="checkbox {{ ($data->status ?? '') == '3' ? 'checked' : '' }}"></span> Repair (
+                    Perbaikan )<br>
+                    <span class="checkbox {{ ($data->status ?? '') == '2' ? 'checked' : '' }}"></span> Return (
+                    Kembalikan ke Supplier )<br>
+                    <span class="checkbox {{ ($data->status ?? '') == '1' ? 'checked' : '' }}"></span> Scrap (
+                    Buang/Hancurkan )<br>
                     <span class="checkbox"></span> ....................................
                 </div>
             </td>
 
 
             <td class="no-border" style="text-align:center; width:30%;">
-                Dilaporkan,<br><br><br><br><br>
-                ( <span style="display:inline-block; width:80px; "> </span> )
+                Disetujui Oleh,<br><br><br><br><br>
+                ( <span style="display:inline-block; width:80px; "> QC Manager </span> )
             </td>
             <td class="no-border" style="text-align:center; width:30%;">
-                Dilaporkan,<br><br><br><br><br>
+                Diposisi,<br><br><br><br><br>
                 ( <span style="display:inline-block; width:80px; "> </span> )
             </td>
         </tr>
@@ -210,10 +186,21 @@
 
         <tr>
             <td class="no-border" style=" vertical-align:top;">
-                pelaksanaan Disposisi:<br>
+                Pelaksanaan Disposisi:<br>
                 <div style="margin-top:6px;">
-                    <div class="line"></div>
-                    <div class="line"></div>
+                    @if ($data->status == '3')
+                        Barang telah diperbaiki dan dikembalikan ke inventory pada
+                        {{ \Carbon\Carbon::parse($data->updated_at)->format('d-m-Y') }}
+                    @elseif ($data->status == '2')
+                        Barang telah dikembalikan ke supplier {{ $data->supplier_name ?? '' }} pada
+                        {{ \Carbon\Carbon::parse($data->updated_at)->format('d-m-Y') }}
+                    @elseif ($data->status == '1')
+                        Barang telah di-scrap/dibuang pada
+                        {{ \Carbon\Carbon::parse($data->updated_at)->format('d-m-Y') }}
+                    @else
+                        <div class="line"></div>
+                        <div class="line"></div>
+                    @endif
                     <div class="line"></div>
                     <div class="line"></div>
                 </div>
@@ -221,8 +208,8 @@
 
 
             <td class="no-border" style="text-align:center; width:30%;">
-                Dilaporkan,<br><br><br><br><br>
-                ( <span style="display:inline-block; width:80px; "> </span> )
+                Dilaksanakan Oleh,<br><br><br><br><br>
+                ( <span style="display:inline-block; width:80px; "> Warehouse </span> )
             </td>
         </tr>
     </table>
@@ -243,8 +230,8 @@
 
 
             <td class="no-border" style="text-align:center; width:30%;">
-                Dilaporkan,<br><br><br><br><br>
-                ( <span style="display:inline-block; width:80px; "> </span> )
+                Diverifikasi Oleh,<br><br><br><br><br>
+                ( <span style="display:inline-block; width:80px; "> QC Manager </span> )
             </td>
         </tr>
     </table>
@@ -257,7 +244,8 @@
                 Distribusi :<br>
                 <div style="margin-top:6px;">
                     <span class="checkbox"></span> PPIC <br>
-                    <span class="checkbox"></span> MKT<br>
+                    <span class="checkbox"></span> Pembelian<br>
+                    <span class="checkbox"></span> QA<br>
                     <span class="checkbox"></span> PROD<br>
 
                 </div>

@@ -192,7 +192,9 @@
                                         <li><a href="{{ url('data-waste/') }}" data-key="t-blog-grid">
                                                 Data Waste</a></li>
                                         <li><a href="{{ url('historystock/fg') }}" data-key="t-blog-grid">
-                                                History Stock FG</a></li>
+                                                History Stock Sample</a></li>
+                                        <li><a href="{{ url('lmts/') }}" data-key="t-blog-grid">
+                                                LMTS</a></li>
                                     @endcan
 
                                     @can('PPIC_good-receipt-note')

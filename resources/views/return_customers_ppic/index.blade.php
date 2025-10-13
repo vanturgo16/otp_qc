@@ -42,8 +42,9 @@
                                     <form action="{{ route('return-customer-ppic.store') }}" method="POST">
                                         @csrf
                                         <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="modalAddReturnLabel">Add Data Return Customer
+                                            <div class="modal-header bg-info text-white">
+                                                <h5 class="modal-title" id="modalAddReturnLabel">
+                                                    <i class="mdi mdi-plus-circle"></i> Add Data Return Customer
                                                 </h5>
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                             </div>
@@ -166,9 +167,12 @@
                                                 </div>
                                             </div>
                                             <div class="modal-footer">
-                                                <button type="submit" class="btn btn-primary">Simpan</button>
-                                                <button type="button" class="btn btn-secondary"
-                                                    data-bs-dismiss="modal">Batal</button>
+                                                <button type="submit" class="btn btn-primary">
+                                                    <i class="mdi mdi-content-save"></i> Simpan
+                                                </button>
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                    <i class="mdi mdi-close"></i> Batal
+                                                </button>
                                             </div>
                                         </div>
                                     </form>
@@ -206,20 +210,23 @@
                                         </div>
 
                                         <div class="align-self-end">
-                                            <button type="submit" class="btn btn-primary">Search</button>
+                                            <button type="submit" class="btn btn-primary">
+                                                <i class="mdi mdi-magnify"></i> Search
+                                            </button>
                                             <button type="button" class="btn btn-secondary" data-bs-toggle="modal"
                                                 data-bs-target="#filterModalReturn">
                                                 <i class="mdi mdi-filter-variant"></i> Filter
                                             </button>
-                                            <a href="#" id="exportExcelBtn" class="btn btn-success">Export
-                                                Excel</a>
+                                            <a href="#" id="exportExcelBtn" class="btn btn-success">
+                                                <i class="mdi mdi-file-excel"></i> Export Excel
+                                            </a>
                                         </div>
                                     </div>
                                     <!-- Tombol kanan sendiri (Add Data) -->
                                     <div>
                                         <button type="button" class="btn btn-info" data-bs-toggle="modal"
                                             data-bs-target="#modalAddReturn">
-                                            Add Data
+                                            <i class="mdi mdi-plus-circle"></i> Add Data
                                         </button>
                                     </div>
                                 </div>
@@ -340,6 +347,7 @@
 
                                     </tr>
                                 </thead>
+                                <!-- filepath: e:\Projek_Qc\otp_qc\resources\views\return_customers_ppic\index.blade.php -->
                                 <tbody>
                                     @foreach ($returns as $return)
                                         <tr>
@@ -354,22 +362,24 @@
                                             <td>{{ $return->weight }}</td>
                                             <td>{{ $return->qc_status }}</td>
                                             <td>{{ $return->keterangan }}</td>
-
-
                                             <td>
                                                 <a href="{{ route('return-customer-ppic.print', encrypt($return->id_delivery_note_details)) }}"
-                                                    class="btn btn-primary" target="_blank">Print PDF</a>
+                                                    class="btn btn-primary btn-sm" target="_blank">
+                                                    <i class="mdi mdi-printer"></i> Print PDF
+                                                </a>
 
                                                 @if ($return->qc_status !== 'scrap' && $return->qc_status !== 'rework')
-                                                    <!-- Tombol Scrap buka modal -->
-                                                    <button type="button" class="btn btn-danger" data-bs-toggle="modal"
+                                                    <!-- Tombol Scrap -->
+                                                    <button type="button" class="btn btn-danger btn-sm"
+                                                        data-bs-toggle="modal"
                                                         data-bs-target="#modalScrap{{ $return->id }}">
-                                                        Scrap
+                                                        <i class="mdi mdi-delete"></i> Scrap
                                                     </button>
-                                                    <!-- Tombol Rework buka modal -->
-                                                    <button type="button" class="btn btn-warning" data-bs-toggle="modal"
+                                                    <!-- Tombol Rework -->
+                                                    <button type="button" class="btn btn-warning btn-sm"
+                                                        data-bs-toggle="modal"
                                                         data-bs-target="#modalRework{{ $return->id }}">
-                                                        Rework
+                                                        <i class="mdi mdi-wrench"></i> Rework
                                                     </button>
 
                                                     <!-- Modal Scrap -->
@@ -383,25 +393,33 @@
                                                                 method="POST">
                                                                 @csrf
                                                                 <div class="modal-content">
-                                                                    <div class="modal-header">
+                                                                    <div class="modal-header bg-danger text-white">
                                                                         <h5 class="modal-title"
                                                                             id="modalScrapLabel{{ $return->id }}">
-                                                                            Scrap Data Return Customer
+                                                                            <i class="mdi mdi-delete"></i> Scrap Data
+                                                                            Return Customer
                                                                         </h5>
                                                                         <button type="button" class="btn-close"
                                                                             data-bs-dismiss="modal"></button>
                                                                     </div>
                                                                     <div class="modal-body">
-                                                                        <label for="waste_date{{ $return->id }}">Date
-                                                                            Scrap</label>
+                                                                        <div class="alert alert-warning py-2">
+                                                                            <i class="mdi mdi-alert-outline"></i>
+                                                                            <strong>Peringatan:</strong> Proses scrap akan
+                                                                            mengubah status return customer menjadi scrap.
+                                                                        </div>
+                                                                        <label for="waste_date{{ $return->id }}">
+                                                                            <i class="mdi mdi-calendar"></i> Date Scrap
+                                                                        </label>
                                                                         <input type="date" name="waste_date"
                                                                             id="waste_date{{ $return->id }}"
                                                                             class="form-control"
                                                                             value="{{ now()->format('Y-m-d') }}" required>
                                                                     </div>
                                                                     <div class="modal-footer">
-                                                                        <button type="submit"
-                                                                            class="btn btn-danger">Scrap</button>
+                                                                        <button type="submit" class="btn btn-danger">
+                                                                            <i class="mdi mdi-delete"></i> Scrap
+                                                                        </button>
                                                                         <button type="button" class="btn btn-secondary"
                                                                             data-bs-dismiss="modal">Batal</button>
                                                                     </div>
@@ -421,25 +439,33 @@
                                                                 method="POST">
                                                                 @csrf
                                                                 <div class="modal-content">
-                                                                    <div class="modal-header">
+                                                                    <div class="modal-header bg-warning">
                                                                         <h5 class="modal-title"
                                                                             id="modalReworkLabel{{ $return->id }}">
-                                                                            Rework Data Return Customer
+                                                                            <i class="mdi mdi-wrench"></i> Rework Data
+                                                                            Return Customer
                                                                         </h5>
                                                                         <button type="button" class="btn-close"
                                                                             data-bs-dismiss="modal"></button>
                                                                     </div>
                                                                     <div class="modal-body">
-                                                                        <label for="rework_date{{ $return->id }}">Date
-                                                                            Rework</label>
+                                                                        <div class="alert alert-info py-2">
+                                                                            <i class="mdi mdi-information-outline"></i>
+                                                                            <strong>Informasi:</strong> Proses rework akan
+                                                                            mengubah status return customer menjadi rework.
+                                                                        </div>
+                                                                        <label for="rework_date{{ $return->id }}">
+                                                                            <i class="mdi mdi-calendar"></i> Date Rework
+                                                                        </label>
                                                                         <input type="date" name="rework_date"
                                                                             id="rework_date{{ $return->id }}"
                                                                             class="form-control"
                                                                             value="{{ now()->format('Y-m-d') }}" required>
                                                                     </div>
                                                                     <div class="modal-footer">
-                                                                        <button type="submit"
-                                                                            class="btn btn-warning">Rework</button>
+                                                                        <button type="submit" class="btn btn-warning">
+                                                                            <i class="mdi mdi-wrench"></i> Rework
+                                                                        </button>
                                                                         <button type="button" class="btn btn-secondary"
                                                                             data-bs-dismiss="modal">Batal</button>
                                                                     </div>
@@ -447,14 +473,19 @@
                                                             </form>
                                                         </div>
                                                     </div>
-
-                                                      @elseif ($data->qc_status === 'scrap')
-                                                        <span class="badge bg-danger text-white">Sudah Scrap</span>
-                                                    @elseif ($data->qc_status === 'rework')
-                                                        <span class="badge bg-warning text-white">Sudah Rework</span>
-                                                    @else
-                                                        <span class="badge bg-secondary text-white">{{ $data->qc_status ?? 'Belum Ada Status' }}</span>
-                                                    @endif
+                                                @elseif ($return->qc_status === 'scrap')
+                                                    <span class="badge bg-danger text-white">
+                                                        <i class="mdi mdi-delete"></i> Sudah Scrap
+                                                    </span>
+                                                @elseif ($return->qc_status === 'rework')
+                                                    <span class="badge bg-warning text-white">
+                                                        <i class="mdi mdi-wrench"></i> Sudah Rework
+                                                    </span>
+                                                @else
+                                                    <span class="badge bg-secondary text-white">
+                                                        <i class="mdi mdi-help-circle"></i>
+                                                        {{ $return->qc_status ?? 'Belum Ada Status' }}
+                                                    </span>
                                                 @endif
                                             </td>
                                         </tr>

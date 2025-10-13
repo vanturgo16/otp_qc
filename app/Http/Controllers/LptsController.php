@@ -207,7 +207,7 @@ class LptsController extends Controller
             'mpf.weight',
             'lpts.qc_status'
         )
-        ->limit(50)
+        ->limit(200)
         ->get();
 
 
@@ -327,8 +327,13 @@ class LptsController extends Controller
     {
         // Ambil dari lpts
         $lpts = DB::table('lpts')->where('id_wo', $work_order_id)->first();
-        if (!$lpts || empty($lpts->keterangan)) {
-            return back()->with('error', 'Isi keterangan dulu untuk bisa print LPTS!');
+        if (!$lpts) {
+            return back()->with('error', 'Data LPTS tidak ditemukan!');
+        }
+
+        // Validasi: hanya bisa print jika sudah di-scrap atau rework
+        if (!in_array($lpts->qc_status, ['scrap', 'rework'])) {
+            return back()->with('error', 'LPTS hanya bisa di-print setelah di-scrap atau rework!');
         }
 
         // Gabungkan barcode_number via subquery GROUP_CONCAT
@@ -368,6 +373,7 @@ class LptsController extends Controller
         // Gabungkan data lpts ke $data
         $data->no_lpts = $lpts->no_lpts;
         $data->keterangan = $lpts->keterangan;
+        $data->qc_status = $lpts->qc_status; // tambahkan qc_status untuk checkbox
         // Tambahkan format tanggal jika perlu print
         $data->created_at_formatted = $this->formatTanggal($data->created_at);
 

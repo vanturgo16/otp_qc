@@ -8,6 +8,7 @@ use App\Http\Controllers\DataWasteController;
 use App\Http\Controllers\GrnController;
 use App\Http\Controllers\HistoryStockSampleController;
 use App\Http\Controllers\LptsController;
+use App\Http\Controllers\LmtsController;
 use App\Http\Controllers\ProductionController;
 use App\Http\Controllers\qc\CoaController;
 use App\Http\Controllers\qc\HistorystokController;
@@ -15,6 +16,7 @@ use App\Http\Controllers\ReturnCustomerPPIC;
 use App\Http\Controllers\user\PermissionController;
 use App\Http\Controllers\user\RoleController;
 use App\Http\Controllers\user\UserController;
+use App\Http\Middleware\RoleMiddleware;
 
 
 //PRODUCTION
@@ -63,6 +65,20 @@ Route::middleware(['auth', 'clear.permission.cache', 'permission:PPIC'])->group(
             Route::get('/export-excel', [LptsController::class, 'exportExcel'])->name('lpts.exportExcel');
             Route::post('/{id}/scrap', [LptsController::class, 'scrap'])->name('lpts.scrap');
             Route::post('/{id}/rework', [LptsController::class, 'rework'])->name('lpts.rework');
+        });
+    });
+
+    // LMTS routes
+    Route::controller(LmtsController::class)->group(function () {
+        Route::prefix('lmts')->group(function () {
+            Route::get('/', 'index')->name('lmts.index');
+            Route::get('/export-excel', 'exportExcel')->name('lmts.export.excel');
+            Route::post('/{id}/scrap', 'scrap')->name('lmts.scrap');
+            Route::post('/{id}/return', 'return')->name('lmts.return');
+            Route::post('/{id}/repair', 'repair')->name('lmts.repair');
+            Route::post('/{id}/unposted', 'unposted')->name('lmts.unposted')->middleware(RoleMiddleware::class . ':super admin,Super Admin,SUPER ADMIN');
+            Route::get('/{id}/print', 'printLmts')->name('lmts.print');
+            // Future actions: store, rework, print
         });
     });
 

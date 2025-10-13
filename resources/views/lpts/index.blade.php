@@ -36,13 +36,17 @@
                                     <input type="text" name="type_product" id="type_product" class="form-control"
                                         value="{{ request('type_product') }}" placeholder="Cari Type Product">
                                 </div>
-                                <div class="form-group align-self-end d-flex gap-2">
-                                    <button type="submit" class="btn btn-primary">Search</button>
-                                    <button type="button" class="btn btn-secondary " data-bs-toggle="modal"
+                                <div class="align-self-end">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="mdi mdi-magnify"></i> Search
+                                    </button>
+                                    <button type="button" class="btn btn-secondary" data-bs-toggle="modal"
                                         data-bs-target="#filterModalLpts">
                                         <i class="mdi mdi-filter-variant"></i> Filter
                                     </button>
-                                    <a href="#" id="exportExcelBtn" class="btn btn-success">Export Excel</a>
+                                    <a href="#" id="exportExcelBtn" class="btn btn-success">
+                                        <i class="mdi mdi-file-excel"></i> Export Excel
+                                    </a>
                                 </div>
                                 @push('scripts')
                                     <script>
@@ -187,8 +191,9 @@
                                                     <button type="button" class="btn btn-sm btn-success"
                                                         data-bs-toggle="modal"
                                                         data-bs-target="#modalKeterangan{{ $data->work_order_id }}">
-                                                        Add Keterangan
+                                                        <i class="mdi mdi-note-plus"></i> Add Keterangan
                                                     </button>
+
                                                     <!-- Modal keterangan -->
                                                     <div class="modal fade"
                                                         id="modalKeterangan{{ $data->work_order_id }}" tabindex="-1"
@@ -202,10 +207,12 @@
                                                                 <input type="hidden" name="id_wo"
                                                                     value="{{ $data->work_order_id }}">
                                                                 <div class="modal-content">
-                                                                    <div class="modal-header">
+                                                                    <div class="modal-header bg-success text-white">
                                                                         <h5 class="modal-title"
                                                                             id="modalLabel{{ $data->work_order_id }}">
-                                                                            Tambah Keterangan LPTS</h5>
+                                                                            <i class="mdi mdi-note-plus"></i> Tambah
+                                                                            Keterangan LPTS
+                                                                        </h5>
                                                                         <button type="button" class="btn-close"
                                                                             data-bs-dismiss="modal"></button>
                                                                     </div>
@@ -217,10 +224,13 @@
                                                                         @endif
                                                                     </div>
                                                                     <div class="modal-footer">
-                                                                        <button type="submit"
-                                                                            class="btn btn-primary">Simpan</button>
+                                                                        <button type="submit" class="btn btn-primary">
+                                                                            <i class="mdi mdi-content-save"></i> Simpan
+                                                                        </button>
                                                                         <button type="button" class="btn btn-secondary"
-                                                                            data-bs-dismiss="modal">Batal</button>
+                                                                            data-bs-dismiss="modal">
+                                                                            <i class="mdi mdi-close"></i> Batal
+                                                                        </button>
                                                                     </div>
                                                                 </div>
                                                             </form>
@@ -229,28 +239,28 @@
                                                 @endif
                                             </td>
                                             <td>
-                                                @if ($data->can_print)
+                                                {{-- Tombol Print hanya muncul jika sudah di-scrap atau rework --}}
+                                                @if (!empty($data->id) && ($data->qc_status === 'scrap' || $data->qc_status === 'rework'))
                                                     <a href="{{ route('lpts.print', $data->work_order_id) }}"
                                                         class="btn btn-sm btn-primary" target="_blank">
-                                                        Print PDF
+                                                        <i class="mdi mdi-printer"></i> Print PDF
                                                     </a>
                                                 @endif
 
-                                                {{-- Tombol Scrap dan Rework hanya muncul jika $data->id ADA dan belum di scrap/rework --}}
                                                 @if (!empty($data->id))
                                                     @if ($data->qc_status === 'checked')
                                                         <!-- Tombol Scrap buka modal -->
                                                         <button type="button" class="btn btn-danger btn-sm"
                                                             data-bs-toggle="modal"
                                                             data-bs-target="#modalScrap{{ $data->id }}">
-                                                            Scrap
+                                                            <i class="mdi mdi-delete"></i> Scrap
                                                         </button>
 
                                                         <!-- Tombol Rework buka modal -->
                                                         <button type="button" class="btn btn-warning btn-sm"
                                                             data-bs-toggle="modal"
                                                             data-bs-target="#modalRework{{ $data->id }}">
-                                                            Rework
+                                                            <i class="mdi mdi-wrench"></i> Rework
                                                         </button>
 
                                                         <!-- Modal Scrap -->
@@ -263,18 +273,25 @@
                                                                     method="POST">
                                                                     @csrf
                                                                     <div class="modal-content">
-                                                                        <div class="modal-header">
+                                                                        <div class="modal-header bg-danger text-white">
                                                                             <h5 class="modal-title"
                                                                                 id="modalScrapLabel{{ $data->id }}">
-                                                                                Scrap Data LPTS
+                                                                                <i class="mdi mdi-delete"></i> Scrap Data
+                                                                                LPTS
                                                                             </h5>
                                                                             <button type="button" class="btn-close"
                                                                                 data-bs-dismiss="modal"></button>
                                                                         </div>
                                                                         <div class="modal-body">
-                                                                            <label
-                                                                                for="waste_date{{ $data->id }}">Tanggal
-                                                                                Scrap</label>
+                                                                            <div class="alert alert-warning py-2">
+                                                                                <i class="mdi mdi-alert-outline"></i>
+                                                                                <strong>Peringatan:</strong> scrap
+                                                                                akan mengubah status menjadi scrap.
+                                                                            </div>
+                                                                            <label for="waste_date{{ $data->id }}">
+                                                                                <i class="mdi mdi-calendar"></i> Tanggal
+                                                                                Scrap
+                                                                            </label>
                                                                             <input type="date" name="waste_date"
                                                                                 id="waste_date{{ $data->id }}"
                                                                                 class="form-control"
@@ -282,8 +299,9 @@
                                                                                 required>
                                                                         </div>
                                                                         <div class="modal-footer">
-                                                                            <button type="submit"
-                                                                                class="btn btn-danger">Scrap</button>
+                                                                            <button type="submit" class="btn btn-danger">
+                                                                                <i class="mdi mdi-delete"></i> Scrap
+                                                                            </button>
                                                                             <button type="button"
                                                                                 class="btn btn-secondary"
                                                                                 data-bs-dismiss="modal">Batal</button>
@@ -303,18 +321,25 @@
                                                                     method="POST">
                                                                     @csrf
                                                                     <div class="modal-content">
-                                                                        <div class="modal-header">
+                                                                        <div class="modal-header bg-warning">
                                                                             <h5 class="modal-title"
                                                                                 id="modalReworkLabel{{ $data->id }}">
-                                                                                Rework Data LPTS
+                                                                                <i class="mdi mdi-wrench"></i> Rework Data
+                                                                                LPTS
                                                                             </h5>
                                                                             <button type="button" class="btn-close"
                                                                                 data-bs-dismiss="modal"></button>
                                                                         </div>
                                                                         <div class="modal-body">
-                                                                            <label
-                                                                                for="rework_date{{ $data->id }}">Tanggal
-                                                                                Rework</label>
+                                                                            <div class="alert alert-info py-2">
+                                                                                <i class="mdi mdi-information-outline"></i>
+                                                                                <strong>Informasi:</strong> rework
+                                                                                akan mengubah status menjadi rework.
+                                                                            </div>
+                                                                            <label for="rework_date{{ $data->id }}">
+                                                                                <i class="mdi mdi-calendar"></i> Tanggal
+                                                                                Rework
+                                                                            </label>
                                                                             <input type="date" name="rework_date"
                                                                                 id="rework_date{{ $data->id }}"
                                                                                 class="form-control"
@@ -323,7 +348,9 @@
                                                                         </div>
                                                                         <div class="modal-footer">
                                                                             <button type="submit"
-                                                                                class="btn btn-warning">Rework</button>
+                                                                                class="btn btn-warning">
+                                                                                <i class="mdi mdi-wrench"></i> Rework
+                                                                            </button>
                                                                             <button type="button"
                                                                                 class="btn btn-secondary"
                                                                                 data-bs-dismiss="modal">Batal</button>
@@ -333,11 +360,18 @@
                                                             </div>
                                                         </div>
                                                     @elseif ($data->qc_status === 'scrap')
-                                                        <span class="badge bg-danger text-white">Sudah Scrap</span>
+                                                        <span class="badge bg-danger text-white">
+                                                            <i class="mdi mdi-delete"></i> Sudah Scrap
+                                                        </span>
                                                     @elseif ($data->qc_status === 'rework')
-                                                        <span class="badge bg-warning text-white">Sudah Rework</span>
+                                                        <span class="badge bg-warning text-white">
+                                                            <i class="mdi mdi-wrench"></i> Sudah Rework
+                                                        </span>
                                                     @else
-                                                        <span class="badge bg-secondary text-white">{{ $data->qc_status ?? 'Belum Ada Status' }}</span>
+                                                        <span class="badge bg-secondary text-white">
+                                                            <i class="mdi mdi-help-circle"></i>
+                                                            {{ $data->qc_status ?? 'Belum Ada Status' }}
+                                                        </span>
                                                     @endif
                                                 @endif
                                             </td>
