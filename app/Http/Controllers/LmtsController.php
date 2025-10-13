@@ -373,7 +373,7 @@ class LmtsController extends Controller
             'qty' => $qtyValue, // gunakan qty yang sudah diformat
             'weight' => null,
             'is_closed' => 1,
-            'type_stock' => 'IN', // IN karena barang repair kembali masuk ke inventory
+            'type_stock' => 'REPAIR', // IN karena barang repair kembali masuk ke inventory
             'date' => $request->repair_date,
             'barcode' => null,
             'remarks' => 'Repair dari LMTS: ' . $lmts->no_lmts . ' - ' . $request->repair_notes,
@@ -382,11 +382,11 @@ class LmtsController extends Controller
         ]);
 
         // Update stock master_product_fgs (TAMBAH stock) karena barang repair kembali ke inventory
-        DB::table('master_product_fgs')
-            ->where('id', $lmts->id_master_products)
-            ->increment('stock', $qtyValue);
+        // DB::table('master_product_fgs')
+        //     ->where('id', $lmts->id_master_products)
+        //     ->increment('stock', $qtyValue);
 
-        return back()->with('pesan', 'Data LMTS berhasil di-repair dan stock telah ditambahkan kembali ke inventory!');
+        return back()->with('pesan', 'Data LMTS berhasil di-repair !');
 
     } catch (\Exception $e) {
         return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
