@@ -16,6 +16,7 @@ use App\Http\Controllers\ReturnCustomerPPIC;
 use App\Http\Controllers\user\PermissionController;
 use App\Http\Controllers\user\RoleController;
 use App\Http\Controllers\user\UserController;
+use App\Http\Middleware\RoleMiddleware;
 
 
 //PRODUCTION
@@ -75,7 +76,7 @@ Route::middleware(['auth', 'clear.permission.cache', 'permission:PPIC'])->group(
             Route::post('/{id}/scrap', 'scrap')->name('lmts.scrap');
             Route::post('/{id}/return', 'return')->name('lmts.return');
             Route::post('/{id}/repair', 'repair')->name('lmts.repair');
-            Route::post('/{id}/unposted', 'unposted')->name('lmts.unposted')->middleware('role:Super Admin');
+            Route::post('/{id}/unposted', 'unposted')->name('lmts.unposted')->middleware(RoleMiddleware::class . ':super admin,Super Admin,SUPER ADMIN');
             Route::get('/{id}/print', 'printLmts')->name('lmts.print');
             // Future actions: store, rework, print
         });

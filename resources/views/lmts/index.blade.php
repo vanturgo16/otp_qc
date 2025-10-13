@@ -663,10 +663,6 @@
                                         <p><strong>Current Status:</strong> {{ $data->status == 0 ? 'Hold' : 'Processed' }}</p>
                                     </div>
 
-                                    <label for="unpost_reason{{ $loop->iteration }}">Alasan Penghapusan <span
-                                            class="text-danger">*</span></label>
-                                    <textarea name="unpost_reason" id="unpost_reason{{ $loop->iteration }}" class="form-control" rows="3"
-                                        placeholder="Masukkan alasan mengapa data ini dihapus..." required></textarea>
 
                                     <div class="form-check mt-3">
                                         <input class="form-check-input" type="checkbox"
