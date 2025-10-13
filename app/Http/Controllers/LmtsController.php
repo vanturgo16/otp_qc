@@ -32,7 +32,7 @@ class LmtsController extends Controller
                 'lmts.remarks',
                 'lmts.button_active',
                 'lmts.id_good_receipt_notes',
-                'lmts.id_master_products', // tambahkan ini
+                'lmts.id_master_products',
                 'grn.id_master_suppliers',
                 'ms.name',
                 'lmts.lmts_notes',
@@ -214,7 +214,7 @@ class LmtsController extends Controller
                 'id_master_products' => $lmts->id_master_products, // pakai dari LMTS langsung
                 'qty' => $qtyValue, // gunakan qty yang sudah diformat
                 'weight' => null, // kosongkan dulu
-                'is_closed' => null,// kosongkan dulu
+                'is_closed' => 1, // tandai sebagai closed
                 'type_stock' => 'OUT',
                 'date' => $request->scrap_date,
                 'barcode' => null, // kosongkan
@@ -293,7 +293,7 @@ class LmtsController extends Controller
                 'id_master_products' => $lmts->id_master_products, // pakai dari LMTS langsung
                 'qty' => $qtyValue, // gunakan qty yang sudah diformat
                 'weight' => null, // kosongkan dulu
-                'is_closed' => null,// kosongkan dulu
+                'is_closed' => 1, // tandai sebagai closed
                 'type_stock' => 'OUT',
                 'date' => $request->return_date,
                 'barcode' => null, // kosongkan
@@ -372,7 +372,7 @@ class LmtsController extends Controller
             'id_master_products' => $lmts->id_master_products,
             'qty' => $qtyValue, // gunakan qty yang sudah diformat
             'weight' => null,
-            'is_closed' => null,
+            'is_closed' => 1,
             'type_stock' => 'IN', // IN karena barang repair kembali masuk ke inventory
             'date' => $request->repair_date,
             'barcode' => null,
