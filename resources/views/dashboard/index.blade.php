@@ -44,7 +44,7 @@
                 <div class="col-12">
                     <div class="card border-0" style="background-color: #f0f0f0;">
                         <div class="card-body py-6">
-                            <h6 class="mb-0 text-dark">Laporan Produk Tidak Sesuai (LMTS)</h6>
+                            <h6 class="mb-0 text-dark">Laporan Produk Tidak Sesuai (LPTS)</h6>
                         </div>
                     </div>
                 </div>
