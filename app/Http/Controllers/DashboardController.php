@@ -12,26 +12,26 @@ class DashboardController extends Controller
        
     }
     public function index(){
-         // Fetch distinct type_stock values
-        $typeStocks = DB::table('history_stocks')
-                        ->distinct()
-                        ->pluck('type_stock');
+        //  // Fetch distinct type_stock values
+        // $typeStocks = DB::table('history_stocks')
+        //                 ->distinct()
+        //                 ->pluck('type_stock');
         
-        // Fetch counts grouped by type_product and type_stock
-        $data = DB::table('history_stocks')
-                    ->select('type_product', 'type_stock', DB::raw('count(*) as count'))
-                    ->groupBy('type_product', 'type_stock')
-                    ->get();
+        // // Fetch counts grouped by type_product and type_stock
+        // $data = DB::table('history_stocks')
+        //             ->select('type_product', 'type_stock', DB::raw('count(*) as count'))
+        //             ->groupBy('type_product', 'type_stock')
+        //             ->get();
 
-        // Prepare chart data dynamically
-        $chartData = [];
-        foreach (['FG', 'WIP', 'RM'] as $typeProduct) {
-            foreach ($typeStocks as $typeStock) {
-                $chartData[$typeProduct][$typeStock] = $data->where('type_product', $typeProduct)->where('type_stock', $typeStock)->first()->count ?? 0;
-            }
-        }
+        // // Prepare chart data dynamically
+        // $chartData = [];
+        // foreach (['FG', 'WIP', 'RM'] as $typeProduct) {
+        //     foreach ($typeStocks as $typeStock) {
+        //         $chartData[$typeProduct][$typeStock] = $data->where('type_product', $typeProduct)->where('type_stock', $typeStock)->first()->count ?? 0;
+        //     }
+        // }
         // dd($chartData);
-        return view('dashboard.index',compact('chartData', 'typeStocks'));
+        return view('dashboard.index');
 
     }
 }

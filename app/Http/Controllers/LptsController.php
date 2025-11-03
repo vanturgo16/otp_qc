@@ -207,7 +207,6 @@ class LptsController extends Controller
             'mpf.weight',
             'lpts.qc_status'
         )
-        ->limit(200)
         ->get();
 
 
