@@ -39,80 +39,85 @@
                 </div>
             </div>
 
-            <!-- Order Confirmation (KO) Section -->
+            <!-- LPTS Section -->
             <div class="row mb-3">
                 <div class="col-12">
                     <div class="card border-0" style="background-color: #f0f0f0;">
-                        <div class="card-body py-6">
-                            <h6 class="mb-0 text-dark">Laporan Produk Tidak Sesuai (LPTS)</h6>
+                        <div class="card-body py-2">
+                            <h6 class="mb-0 text-dark">
+                                <i class="mdi mdi-clipboard-check-outline"></i>
+                                Laporan Produk Tidak Sesuai (LPTS)
+                            </h6>
                         </div>
                     </div>
                 </div>
             </div>
 
+            <div class="row mb-2">
+                <!-- Checked -->
+                <div class="col-xl-4 col-md-6 mb-3">
+                    <div class="card border-0 shadow-sm" style="min-height: 120px;">
+                        <div class="card-body">
+                            <div class="mb-2">
+                                <small class="text-muted">Checked</small>
+                            </div>
+                            <h2 class="mb-2 fw-bold" style="color: #28a745;">{{ $lptsChecked }}</h2>
+                            <div>
+                                <span class="badge" style="background-color: #28a745; color: white; font-size: 11px;">
+                                    +{{ $lptsCheckedToday }} Hari Ini
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Scrap -->
+                <div class="col-xl-4 col-md-6 mb-3">
+                    <div class="card border-0 shadow-sm" style="min-height: 120px;">
+                        <div class="card-body">
+                            <div class="mb-2">
+                                <small class="text-muted">Scrap</small>
+                            </div>
+                            <h2 class="mb-2 fw-bold" style="color: #dc3545;">{{ $lptsScrap }}</h2>
+                            <div>
+                                <span class="badge" style="background-color: #dc3545; color: white; font-size: 11px;">
+                                    +{{ $lptsScrapToday }} Hari Ini
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Rework -->
+                <div class="col-xl-4 col-md-6 mb-3">
+                    <div class="card border-0 shadow-sm" style="min-height: 120px;">
+                        <div class="card-body">
+                            <div class="mb-2">
+                                <small class="text-muted">Rework</small>
+                            </div>
+                            <h2 class="mb-2 fw-bold" style="color: #ffc107;">{{ $lptsRework }}</h2>
+                            <div>
+                                <span class="badge" style="background-color: #ffc107; color: white; font-size: 11px;">
+                                    +{{ $lptsReworkToday }} Hari Ini
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Total LPTS (Full Width) -->
             <div class="row mb-4">
-                <!-- Request / Un Post -->
-                <div class="col-xl-3 col-md-6 mb-3">
+                <div class="col-12">
                     <div class="card border-0 shadow-sm" style="min-height: 120px;">
                         <div class="card-body">
                             <div class="mb-2">
-                                <small class="text-muted">Request / Un Post</small>
+                                <small class="text-muted">Total LPTS</small>
                             </div>
-                            <h2 class="mb-2 fw-bold" style="color: #333;">1</h2>
+                            <h2 class="mb-2 fw-bold" style="color: #333;">{{ $totalLpts }}</h2>
                             <div>
-                                <span class="badge" style="background-color: #00d4aa; color: white; font-size: 11px;">
-                                    +0 Hari Ini
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Posted -->
-                <div class="col-xl-3 col-md-6 mb-3">
-                    <div class="card border-0 shadow-sm" style="min-height: 120px;">
-                        <div class="card-body">
-                            <div class="mb-2">
-                                <small class="text-muted">Posted</small>
-                            </div>
-                            <h2 class="mb-2 fw-bold" style="color: #17a2b8;">97</h2>
-                            <div>
-                                <span class="badge" style="background-color: #00d4aa; color: white; font-size: 11px;">
-                                    +5 Hari Ini
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Closed -->
-                <div class="col-xl-3 col-md-6 mb-3">
-                    <div class="card border-0 shadow-sm" style="min-height: 120px;">
-                        <div class="card-body">
-                            <div class="mb-2">
-                                <small class="text-muted">Closed</small>
-                            </div>
-                            <h2 class="mb-2 fw-bold" style="color: #28a745;">0</h2>
-                            <div>
-                                <span class="badge" style="background-color: #00d4aa; color: white; font-size: 11px;">
-                                    +0 Hari Ini
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Total -->
-                <div class="col-xl-3 col-md-6 mb-3">
-                    <div class="card border-0 shadow-sm" style="min-height: 120px;">
-                        <div class="card-body">
-                            <div class="mb-2">
-                                <small class="text-muted">Total</small>
-                            </div>
-                            <h2 class="mb-2 fw-bold" style="color: #333;">98</h2>
-                            <div>
-                                <span class="badge" style="background-color: #00d4aa; color: white; font-size: 11px;">
-                                    +5 Hari Ini
+                                <span class="badge" style="background-color: #17a2b8; color: white; font-size: 11px;">
+                                    +{{ $lptsTotalToday }} Hari Ini
                                 </span>
                             </div>
                         </div>
@@ -120,111 +125,194 @@
                 </div>
             </div>
 
-            <!-- Sales Order (SO) Section -->
+            <!-- LMTS Section -->
             <div class="row mb-3">
                 <div class="col-12">
                     <div class="card border-0" style="background-color: #f0f0f0;">
-                        <div class="card-body py-6">
-                            <h6 class="mb-0 text-dark">Laporan Material Tidak Sesuai (LMTS)</h6>
+                        <div class="card-body py-2">
+                            <h6 class="mb-0 text-dark">
+                                <i class="mdi mdi-clipboard-text-outline"></i>
+                                Laporan Material Tidak Sesuai (LMTS)
+                            </h6>
                         </div>
                     </div>
                 </div>
             </div>
 
+            <div class="row mb-2">
+                <!-- Hold -->
+                <div class="col-xl-3 col-md-6 mb-3">
+                    <div class="card border-0 shadow-sm" style="min-height: 120px;">
+                        <div class="card-body">
+                            <div class="mb-2">
+                                <small class="text-muted">Hold</small>
+                            </div>
+                            <h2 class="mb-2 fw-bold" style="color: #6c757d;">{{ $lmtsHold }}</h2>
+                            <div>
+                                <span class="badge" style="background-color: #6c757d; color: white; font-size: 11px;">
+                                    +{{ $lmtsHoldToday }} Hari Ini
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Scrap -->
+                <div class="col-xl-3 col-md-6 mb-3">
+                    <div class="card border-0 shadow-sm" style="min-height: 120px;">
+                        <div class="card-body">
+                            <div class="mb-2">
+                                <small class="text-muted">Scrap</small>
+                            </div>
+                            <h2 class="mb-2 fw-bold" style="color: #dc3545;">{{ $lmtsScrap }}</h2>
+                            <div>
+                                <span class="badge" style="background-color: #dc3545; color: white; font-size: 11px;">
+                                    +{{ $lmtsScrapToday }} Hari Ini
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Return -->
+                <div class="col-xl-3 col-md-6 mb-3">
+                    <div class="card border-0 shadow-sm" style="min-height: 120px;">
+                        <div class="card-body">
+                            <div class="mb-2">
+                                <small class="text-muted">Return</small>
+                            </div>
+                            <h2 class="mb-2 fw-bold" style="color: #17a2b8;">{{ $lmtsReturn }}</h2>
+                            <div>
+                                <span class="badge" style="background-color: #17a2b8; color: white; font-size: 11px;">
+                                    +{{ $lmtsReturnToday }} Hari Ini
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Repair -->
+                <div class="col-xl-3 col-md-6 mb-3">
+                    <div class="card border-0 shadow-sm" style="min-height: 120px;">
+                        <div class="card-body">
+                            <div class="mb-2">
+                                <small class="text-muted">Repair</small>
+                            </div>
+                            <h2 class="mb-2 fw-bold" style="color: #ffc107;">{{ $lmtsRepair }}</h2>
+                            <div>
+                                <span class="badge" style="background-color: #ffc107; color: white; font-size: 11px;">
+                                    +{{ $lmtsRepairToday }} Hari Ini
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Total LMTS (Full Width) -->
             <div class="row mb-4">
-                <!-- Request / Un Post -->
-                <div class="col-xl-3 col-md-6 mb-3">
+                <div class="col-12">
                     <div class="card border-0 shadow-sm" style="min-height: 120px;">
                         <div class="card-body">
                             <div class="mb-2">
-                                <small class="text-muted">Request / Un Post</small>
+                                <small class="text-muted">Total LMTS</small>
                             </div>
-                            <h2 class="mb-2 fw-bold" style="color: #333;">3</h2>
-                            <div>
-                                <span class="badge" style="background-color: #00d4aa; color: white; font-size: 11px;">
-                                    +1 Hari Ini
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Posted -->
-                <div class="col-xl-3 col-md-6 mb-3">
-                    <div class="card border-0 shadow-sm" style="min-height: 120px;">
-                        <div class="card-body">
-                            <div class="mb-2">
-                                <small class="text-muted">Posted</small>
-                            </div>
-                            <h2 class="mb-2 fw-bold" style="color: #17a2b8;">396</h2>
+                            <h2 class="mb-2 fw-bold" style="color: #333;">{{ $totalLmts }}</h2>
                             <div>
                                 <span class="badge" style="background-color: #17a2b8; color: white; font-size: 11px;">
-                                    +12 Hari Ini
+                                    +{{ $lmtsTotalToday }} Hari Ini
                                 </span>
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <!-- Closed -->
-                <div class="col-xl-3 col-md-6 mb-3">
+            <!-- Return Customer PPIC Section -->
+            <div class="row mb-3">
+                <div class="col-12">
+                    <div class="card border-0" style="background-color: #f0f0f0;">
+                        <div class="card-body py-2">
+                            <h6 class="mb-0 text-dark">
+                                <i class="mdi mdi-package-variant-closed"></i>
+                                Return Customer PPIC
+                            </h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mb-2">
+                <!-- Checked -->
+                <div class="col-xl-4 col-md-6 mb-3">
                     <div class="card border-0 shadow-sm" style="min-height: 120px;">
                         <div class="card-body">
                             <div class="mb-2">
-                                <small class="text-muted">Closed</small>
+                                <small class="text-muted">Checked</small>
                             </div>
-                            <h2 class="mb-2 fw-bold" style="color: #28a745;">1689</h2>
+                            <h2 class="mb-2 fw-bold" style="color: #28a745;">{{ $returnChecked }}</h2>
                             <div>
-                                <span class="badge" style="background-color: #00d4aa; color: white; font-size: 11px;">
-                                    +8 Hari Ini
+                                <span class="badge" style="background-color: #28a745; color: white; font-size: 11px;">
+                                    +{{ $returnCheckedToday }} Hari Ini
                                 </span>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Total -->
-                <div class="col-xl-3 col-md-6 mb-3">
+                <!-- Scrap -->
+                <div class="col-xl-4 col-md-6 mb-3">
                     <div class="card border-0 shadow-sm" style="min-height: 120px;">
                         <div class="card-body">
                             <div class="mb-2">
-                                <small class="text-muted">Total</small>
+                                <small class="text-muted">Scrap</small>
                             </div>
-                            <h2 class="mb-2 fw-bold" style="color: #333;">2088</h2>
+                            <h2 class="mb-2 fw-bold" style="color: #dc3545;">{{ $returnScrap }}</h2>
+                            <div>
+                                <span class="badge" style="background-color: #dc3545; color: white; font-size: 11px;">
+                                    +{{ $returnScrapToday }} Hari Ini
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Rework -->
+                <div class="col-xl-4 col-md-6 mb-3">
+                    <div class="card border-0 shadow-sm" style="min-height: 120px;">
+                        <div class="card-body">
+                            <div class="mb-2">
+                                <small class="text-muted">Rework</small>
+                            </div>
+                            <h2 class="mb-2 fw-bold" style="color: #ffc107;">{{ $returnRework }}</h2>
+                            <div>
+                                <span class="badge" style="background-color: #ffc107; color: white; font-size: 11px;">
+                                    +{{ $returnReworkToday }} Hari Ini
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Total Return Customer (Full Width) -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card border-0 shadow-sm" style="min-height: 120px;">
+                        <div class="card-body">
+                            <div class="mb-2">
+                                <small class="text-muted">Total Return Customer</small>
+                            </div>
+                            <h2 class="mb-2 fw-bold" style="color: #333;">{{ $totalReturnCustomer }}</h2>
                             <div>
                                 <span class="badge" style="background-color: #17a2b8; color: white; font-size: 11px;">
-                                    +21 Hari Ini
+                                    +{{ $returnTotalToday }} Hari Ini
                                 </span>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-
-            {{-- Comment untuk LMTS & LPTS Section (akan dibuat nanti) --}}
-            {{-- 
-        <!-- LMTS Section -->
-        <div class="row mb-3">
-            <div class="col-12">
-                <div class="card border-0" style="background-color: #f0f0f0;">
-                    <div class="card-body py-2">
-                        <h6 class="mb-0 text-dark">LMTS (Laporan Material Testing & Stock)</h6>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- LPTS Section -->
-        <div class="row mb-3">
-            <div class="col-12">
-                <div class="card border-0" style="background-color: #f0f0f0;">
-                    <div class="card-body py-2">
-                        <h6 class="mb-0 text-dark">LPTS (Laporan Produk Testing & Stock)</h6>
-                    </div>
-                </div>
-            </div>
-        </div>
-        --}}
 
         </div>
     </div>
