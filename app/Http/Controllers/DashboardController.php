@@ -157,6 +157,9 @@ class DashboardController extends Controller
             ->whereDate('created_at', today())
             ->count();
 
+        //DATA WASTE
+        $totalDataWaste = DB::table('data_waste')->count();
+
         return view('dashboard.index', compact(
             // LPTS
             'totalLpts',
@@ -189,6 +192,9 @@ class DashboardController extends Controller
             'returnScrapToday',
             'returnReworkToday',
             'returnTotalToday'
+            
+            //Data Waste
+            ,'totalDataWaste'
         ));
           
     }

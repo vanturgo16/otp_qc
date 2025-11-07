@@ -40,10 +40,10 @@
             </div>
 
             <!-- LPTS Section -->
-            <div class="row mb-3">
+            <div class="row ">
                 <div class="col-12">
                     <div class="card border-0" style="background-color: #f0f0f0;">
-                        <div class="card-body py-2">
+                        <div class="card-body py-3">
                             <h6 class="mb-0 text-dark">
                                 <i class="mdi mdi-clipboard-check-outline"></i>
                                 Laporan Produk Tidak Sesuai (LPTS)
@@ -126,10 +126,10 @@
             </div>
 
             <!-- LMTS Section -->
-            <div class="row mb-3">
+            <div class="row ">
                 <div class="col-12">
                     <div class="card border-0" style="background-color: #f0f0f0;">
-                        <div class="card-body py-2">
+                        <div class="card-body py-3">
                             <h6 class="mb-0 text-dark">
                                 <i class="mdi mdi-clipboard-text-outline"></i>
                                 Laporan Material Tidak Sesuai (LMTS)
@@ -229,10 +229,10 @@
             </div>
 
             <!-- Return Customer PPIC Section -->
-            <div class="row mb-3">
+            <div class="row ">
                 <div class="col-12">
                     <div class="card border-0" style="background-color: #f0f0f0;">
-                        <div class="card-body py-2">
+                        <div class="card-body py-3">
                             <h6 class="mb-0 text-dark">
                                 <i class="mdi mdi-package-variant-closed"></i>
                                 Return Customer PPIC
@@ -308,6 +308,37 @@
                                 <span class="badge" style="background-color: #17a2b8; color: white; font-size: 11px;">
                                     +{{ $returnTotalToday }} Hari Ini
                                 </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Data Waste Section -->
+            <div class="row ">
+                <div class="col-12">
+                    <div class="card border-0" style="background-color: #f0f0f0;">
+                        <div class="card-body py-3">
+                            <h6 class="mb-0 text-dark">
+                                <i class="mdi mdi-delete"></i>
+                                Data Waste
+                            </h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card border-0 shadow-sm" style="min-height: 120px;">
+                        <div class="card-body">
+                            <div class="mb-2">
+                                <small class="text-muted">Total Data Waste</small>
+                            </div>
+                            <h2 class="mb-2 fw-bold" style="color: #333;">{{ $totalDataWaste }}</h2>
+                            <div>
+                                <small class="text-muted">All Time</small>
                             </div>
                         </div>
                     </div>
