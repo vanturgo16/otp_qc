@@ -1,4 +1,4 @@
-// ...existing use statements...
+
 <?php
 
 use App\Http\Controllers\AuthController;

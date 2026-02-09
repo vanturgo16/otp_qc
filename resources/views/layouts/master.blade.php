@@ -203,9 +203,9 @@
                                         <li><a href="/coa" data-key="t-blog-grid">COA</a></li>
                                     @endcan
 
-                                    @can('PPIC_external-no-lot')
+                                    {{-- @can('PPIC_external-no-lot')
                                         <li><a href="/external-no-lot" data-key="t-blog-grid">Return Customer</a></li>
-                                    @endcan
+                                    @endcan --}}
 
                                     {{-- <li><a href="{{ route('ppic.workOrder.index') }}"
                                 class="{{ request()->is('ppic/workOrder/*') ? 'active' : '' }}"><i data-feather="clipboard"></i>Word Order</a>
